@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shinzi AI</title>
+  <link rel="stylesheet" href="mane.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="nav">
+  <h1>Shinzi.ai</h1>
+  <span class="user">redking.ai</span>
+</div>
+
+<!-- HOME SCREEN -->
+<div class="home" id="home">
+  <h2>What can I help you with?</h2>
+
+  <div class="options">
+    <div class="card" onclick="openChat('Make me a website')">🌐 Website</div>
+    <div class="card" onclick="openChat('Build me an app')">📱 App</div>
+    <div class="card" onclick="openChat('Help me study')">📚 Study</div>
+    <div class="card" onclick="openChat('Deep research')">🔍 Research</div>
+    <div class="card" onclick="openChat('Generate code')">💻 Code</div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="chat" id="chat">
+  <div class="messages" id="messages"></div>
+
+  <div class="inputBar">
+    <input id="input" placeholder="Ask anything...">
+    <button onclick="sendMsg()">Send</button>
+  </div>
+</div>
+
+<script>
+function openChat(text) {
+  document.getElementById("home").style.display = "none";
+  document.getElementById("chat").style.display = "flex";
+
+  addMessage(text, "user");
+  fakeReply();
+}
+
+function sendMsg() {
+  let input = document.getElementById("input");
+  let text = input.value;
+
+  if (text === "") return;
+
+  addMessage(text, "user");
+  input.value = "";
+
+  fakeReply();
+}
+
+function addMessage(text, type) {
+  let msg = document.createElement("div");
+  msg.className = "msg " + type;
+  msg.innerText = text;
+
+  document.getElementById("messages").appendChild(msg);
+  msg.scrollIntoView();
+}
+
+function fakeReply() {
+  let thinking = document.createElement("div");
+  thinking.className = "msg ai";
+  thinking.innerText = "Shinzi AI is thinking...";
+  document.getElementById("messages").appendChild(thinking);
+
+  setTimeout(() => {
+    thinking.innerText = "I understand your request. I can help you with that. (Manual/AI response here)";
+  }, 1500);
+}
+</script>
+
+</body>
+</html>
