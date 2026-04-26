@@ -1,0 +1,103 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+}
+
+/* NAVBAR */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 25px;
+  background: #020617;
+}
+
+.user {
+  opacity: 0.7;
+}
+
+/* HOME */
+.home {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.home h2 {
+  font-size: 28px;
+  margin-bottom: 30px;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: repeat(2, 200px);
+  gap: 15px;
+  justify-content: center;
+}
+
+.card {
+  background: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:hover {
+  background: #334155;
+  transform: scale(1.05);
+}
+
+/* CHAT */
+.chat {
+  display: none;
+  flex-direction: column;
+  height: 90vh;
+}
+
+.messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* MESSAGES */
+.msg {
+  margin: 10px 0;
+  padding: 12px;
+  border-radius: 12px;
+  max-width: 60%;
+}
+
+.user {
+  background: #2563eb;
+  margin-left: auto;
+}
+
+.ai {
+  background: #1e293b;
+}
+
+/* INPUT */
+.inputBar {
+  display: flex;
+  padding: 10px;
+  background: #020617;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+}
+
+button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+}
