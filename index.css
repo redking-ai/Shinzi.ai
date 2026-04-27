@@ -1,225 +1,103 @@
+/* --- Global Theme --- */
 :root {
-    --bg-black: #0A0A0A;
-    --bg-card: #161616;
-    --border-color: #2A2A2A;
-    --text-main: #FFFFFF;
-    --text-muted: #8E8E8E;
-    --accent-white: #F5F5F5;
-    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --black: #0A0A0A;
+    --dark-gray: #161616;
+    --border: #2A2A2A;
+    --text-white: #FFFFFF;
+    --text-gray: #8E8E8E;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    background-color: var(--bg-black);
-    color: var(--text-main);
+    background-color: var(--black);
+    color: var(--text-white);
     font-family: 'Inter', sans-serif;
     height: 100vh;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
-/* --- Navigation --- */
-.nav-bar {
+/* --- Fixed Navbar Styling --- */
+.navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 16px 24px;
-    z-index: 10;
+    border-bottom: 1px solid var(--border);
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.nav-left { display: flex; align-items: center; gap: 12px; }
+
+.logo-circle {
+    width: 30px; height: 30px;
+    background: white; border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
 }
 
-.logo-icon {
-    width: 24px;
-    height: 24px;
-    background: white;
-    border-radius: 6px; /* Modern rounded look */
+.logo-text { font-weight: 700; font-size: 1.1rem; }
+.logo-ai { color: var(--text-gray); font-weight: 400; }
+
+.btn-signin {
+    background: #1c1c1c; color: white;
+    border: 1px solid var(--border);
+    padding: 8px 20px; border-radius: 50px;
+    cursor: pointer; transition: 0.2s;
 }
 
-.logo-text {
-    font-weight: 600;
-    font-size: 1.1rem;
-    letter-spacing: -0.5px;
-}
+.btn-signin:hover { background: #2a2a2a; transform: scale(1.05); }
 
-.logo-ai {
-    color: var(--text-muted);
-}
-
-.btn-login {
-    background: transparent;
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-login:hover {
-    background: var(--bg-card);
-}
-
-/* --- Main Layout --- */
-.main-container {
+/* --- Hero Section --- */
+.hero-section {
     flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: center;
-    padding: 0 20px;
-    position: relative;
+    padding: 20px;
 }
 
-.hero {
-    text-align: center;
-    margin-bottom: 40px;
+.hero-center { text-align: center; margin-bottom: 40px; }
+.overline { font-size: 0.7rem; color: var(--text-gray); letter-spacing: 2px; margin-bottom: 8px; }
+.main-title { font-size: 2.5rem; font-weight: 600; letter-spacing: -1px; }
+
+/* --- Interaction Zone --- */
+.interaction-area { width: 100%; max-width: 700px; }
+
+.suggestions-container {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 8px; margin-bottom: 20px;
 }
 
-.overline {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    color: var(--text-muted);
-    margin-bottom: 12px;
+.card {
+    background: var(--dark-gray); border: 1px solid var(--border);
+    color: var(--text-gray); padding: 10px 16px; border-radius: 12px;
+    cursor: pointer; transition: 0.2s; font-size: 0.9rem;
 }
 
-.heading {
-    font-size: 2.4rem;
-    font-weight: 600;
-    letter-spacing: -1px;
-}
-
-/* --- Suggestions Section --- */
-.interaction-zone {
-    width: 100%;
-    max-width: 720px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.suggestions-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-}
-
-.suggestion-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    color: var(--text-muted);
-    padding: 12px 20px;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    font-family: inherit;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.suggestion-card:hover {
-    border-color: #444;
-    color: var(--text-main);
-    transform: translateY(-2px);
-}
-
-.suggestion-card:active {
-    transform: scale(0.96);
-}
+.card:hover { border-color: #555; color: white; }
+.card:active { transform: scale(0.95); }
 
 /* --- Chat Input Box --- */
-.input-container {
-    width: 100%;
-    margin-top: 10px;
-}
-
-.input-wrapper {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 18px;
-    padding: 8px 8px 8px 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: var(--transition);
-}
-
-.input-wrapper:focus-within {
-    border-color: #555;
+.input-box {
+    background: var(--dark-gray);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex; align-items: center;
+    padding: 8px 12px 8px 20px;
 }
 
 input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text-main);
-    font-size: 1rem;
-    font-family: inherit;
-    outline: none;
-    padding: 12px 0;
+    flex: 1; background: transparent; border: none;
+    color: white; outline: none; padding: 12px 0; font-size: 1rem;
 }
 
-input::placeholder {
-    color: var(--text-muted);
+.send-icon {
+    width: 36px; height: 36px; background: white;
+    border-radius: 50%; border: none; cursor: pointer;
 }
 
-.send-btn {
-    background: var(--accent-white);
-    color: black;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.send-btn:hover {
-    opacity: 0.8;
-}
-
-.footer-disclaimer {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-align: center;
-    margin-top: 15px;
-}
-
-/* --- Mobile Responsiveness --- */
-@media (max-width: 600px) {
-    .heading {
-        font-size: 1.8rem;
-    }
-    
-    .suggestions-grid {
-        justify-content: flex-start;
-        overflow-x: auto;
-        flex-wrap: nowrap;
-        padding-bottom: 10px;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .suggestion-card {
-        white-space: nowrap;
-    }
-
-    .input-wrapper {
-        border-radius: 24px;
-    }
+.disclaimer {
+    text-align: center; color: var(--text-gray);
+    font-size: 0.7rem; margin-top: 12px;
 }
