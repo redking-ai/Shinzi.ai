@@ -2,82 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shinzi AI</title>
   <link rel="stylesheet" href="index.css">
 </head>
-
 <body>
 
-<!-- NAVBAR -->
-<div class="nav">
-  <h1>Shinzi.ai</h1>
-  <span class="user">redking.ai</span>
-</div>
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="logo">
+      ✦ Shinzi AI
+    </div>
 
-<!-- HOME SCREEN -->
-<div class="home" id="home">
-  <h2>What can I help you with?</h2>
+    <div class="nav-right">
+      <div class="profile">SB</div>
+      <div class="menu">☰</div>
+    </div>
+  </header>
 
-  <div class="options">
-    <div class="card" onclick="openChat('Make me a website')">🌐 Website</div>
-    <div class="card" onclick="openChat('Build me an app')">📱 App</div>
-    <div class="card" onclick="openChat('Help me study')">📚 Study</div>
-    <div class="card" onclick="openChat('Deep research')">🔍 Research</div>
-    <div class="card" onclick="openChat('Generate code')">💻 Code</div>
-  </div>
-</div>
+  <!-- HERO -->
+  <section class="hero">
+    <p class="subtitle">SHINZI AI • POWERED BY AI</p>
+    <h1>What can I help you with?</h1>
+    <p class="desc">Pick a starting point — or just ask anything below.</p>
+  </section>
 
-<!-- CHAT -->
-<div class="chat" id="chat">
-  <div class="messages" id="messages"></div>
+  <!-- OPTIONS -->
+  <section class="options">
 
-  <div class="inputBar">
-    <input id="input" placeholder="Ask anything...">
-    <button onclick="sendMsg()">Send</button>
-  </div>
-</div>
+    <div class="card">
+      <div class="icon">🌐</div>
+      <div>
+        <h3>Make me a website</h3>
+        <p>Tap to start</p>
+      </div>
+      <span>→</span>
+    </div>
 
-<script>
-function openChat(text) {
-  document.getElementById("home").style.display = "none";
-  document.getElementById("chat").style.display = "flex";
+    <div class="card">
+      <div class="icon">📱</div>
+      <div>
+        <h3>Build me an app</h3>
+        <p>Tap to start</p>
+      </div>
+      <span>→</span>
+    </div>
 
-  addMessage(text, "user");
-  fakeReply();
-}
+    <div class="card">
+      <div class="icon">📖</div>
+      <div>
+        <h3>Help me study</h3>
+        <p>Tap to start</p>
+      </div>
+      <span>→</span>
+    </div>
 
-function sendMsg() {
-  let input = document.getElementById("input");
-  let text = input.value;
+    <div class="card">
+      <div class="icon">🔍</div>
+      <div>
+        <h3>Deep research</h3>
+        <p>Tap to start</p>
+      </div>
+      <span>→</span>
+    </div>
 
-  if (text === "") return;
+    <div class="card">
+      <div class="icon">&lt;/&gt;</div>
+      <div>
+        <h3>Generate code</h3>
+        <p>Tap to start</p>
+      </div>
+      <span>→</span>
+    </div>
 
-  addMessage(text, "user");
-  input.value = "";
-
-  fakeReply();
-}
-
-function addMessage(text, type) {
-  let msg = document.createElement("div");
-  msg.className = "msg " + type;
-  msg.innerText = text;
-
-  document.getElementById("messages").appendChild(msg);
-  msg.scrollIntoView();
-}
-
-function fakeReply() {
-  let thinking = document.createElement("div");
-  thinking.className = "msg ai";
-  thinking.innerText = "Shinzi AI is thinking...";
-  document.getElementById("messages").appendChild(thinking);
-
-  setTimeout(() => {
-    thinking.innerText = "I understand your request. I can help you with that. (Manual/AI response here)";
-  }, 1500);
-}
-</script>
+  </section>
 
 </body>
 </html>
