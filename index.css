@@ -1,103 +1,114 @@
-body {
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: white;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #0d0d0d;
+  color: #fff;
 }
 
 /* NAVBAR */
-.nav {
+.navbar {
   display: flex;
   justify-content: space-between;
-  padding: 15px 25px;
-  background: #020617;
+  align-items: center;
+  padding: 16px 20px;
 }
 
-.user {
-  opacity: 0.7;
+.logo {
+  font-size: 18px;
+  font-weight: bold;
 }
 
-/* HOME */
-.home {
-  text-align: center;
-  margin-top: 80px;
-}
-
-.home h2 {
-  font-size: 28px;
-  margin-bottom: 30px;
-}
-
-.options {
-  display: grid;
-  grid-template-columns: repeat(2, 200px);
+.nav-right {
+  display: flex;
+  align-items: center;
   gap: 15px;
-  justify-content: center;
 }
 
-.card {
-  background: #1e293b;
-  padding: 20px;
-  border-radius: 12px;
+.profile {
+  background: #222;
+  padding: 8px 12px;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.menu {
+  font-size: 20px;
   cursor: pointer;
-  transition: 0.2s;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  margin-top: 40px;
+  padding: 0 20px;
+}
+
+.subtitle {
+  color: #777;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.hero h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.desc {
+  color: #aaa;
+  font-size: 14px;
+}
+
+/* OPTIONS */
+.options {
+  margin-top: 40px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* CARD */
+.card {
+  background: #161616;
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 .card:hover {
-  background: #334155;
-  transform: scale(1.05);
+  background: #1f1f1f;
 }
 
-/* CHAT */
-.chat {
-  display: none;
-  flex-direction: column;
-  height: 90vh;
+.card .icon {
+  font-size: 20px;
+  margin-right: 10px;
 }
 
-.messages {
+.card div {
   flex: 1;
-  padding: 20px;
-  overflow-y: auto;
 }
 
-/* MESSAGES */
-.msg {
-  margin: 10px 0;
-  padding: 12px;
-  border-radius: 12px;
-  max-width: 60%;
+.card h3 {
+  font-size: 16px;
 }
 
-.user {
-  background: #2563eb;
-  margin-left: auto;
+.card p {
+  font-size: 12px;
+  color: #888;
 }
 
-.ai {
-  background: #1e293b;
-}
-
-/* INPUT */
-.inputBar {
-  display: flex;
-  padding: 10px;
-  background: #020617;
-}
-
-input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 20px;
-  border: none;
-}
-
-button {
-  margin-left: 10px;
-  padding: 10px 15px;
-  border-radius: 20px;
-  border: none;
-  background: #3b82f6;
-  color: white;
-  cursor: pointer;
+.card span {
+  font-size: 18px;
+  color: #aaa;
 }
