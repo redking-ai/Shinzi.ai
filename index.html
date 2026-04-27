@@ -2,65 +2,52 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shinzi AI</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
-    <nav class="nav-bar">
-        <div class="logo">
-            <div class="logo-icon"></div>
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo-circle">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3L14.5 9L21 11.5L14.5 14L12 21L9.5 14L3 11.5L9.5 9L12 3Z" fill="black" />
+                </svg>
+            </div>
             <span class="logo-text">Shinzi <span class="logo-ai">AI</span></span>
         </div>
-        <div class="nav-actions">
-            <button class="btn-login" id="loginTrigger">Sign In</button>
+        <div class="nav-right">
+            <button class="btn-signin">Sign In</button>
         </div>
     </nav>
 
-    <main class="main-container">
-        
-        <header class="hero">
+    <main class="hero-section">
+        <div class="hero-center">
             <p class="overline">SHINZI AI • POWERED BY AI</p>
-            <h1 class="heading">What can I help you with?</h1>
-        </header>
+            <h1 class="main-title">What can I help you with?</h1>
+        </div>
 
-        <section class="interaction-zone">
-            
-            <div class="suggestions-grid">
-                <button class="suggestion-card">
-                    <span class="card-title">Make me a website</span>
-                </button>
-                <button class="suggestion-card">
-                    <span class="card-title">Build me an app</span>
-                </button>
-                <button class="suggestion-card">
-                    <span class="card-title">Help me study</span>
-                </button>
-                <button class="suggestion-card">
-                    <span class="card-title">Deep research</span>
-                </button>
-                <button class="suggestion-card">
-                    <span class="card-title">Generate code</span>
-                </button>
+        <div class="interaction-area">
+            <div class="suggestions-container">
+                <button class="card">Make me a website</button>
+                <button class="card">Build me an app</button>
+                <button class="card">Help me study</button>
+                <button class="card">Deep research</button>
+                <button class="card">Generate code</button>
             </div>
 
-            <div class="input-container">
-                <div class="input-wrapper">
-                    <input type="text" placeholder="Ask anything..." id="mainInput">
-                    <button class="send-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 11L12 6L17 11M12 18V7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                </div>
-                <p class="footer-disclaimer">Shinzi AI can make mistakes. Check important info.</p>
+            <div class="input-box">
+                <input type="text" placeholder="Message Shinzi AI...">
+                <button class="send-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 11L12 6L17 11M12 18V7" />
+                    </svg>
+                </button>
             </div>
-
-        </section>
+            <p class="disclaimer">Shinzi AI can make mistakes. Check important info.</p>
+        </div>
     </main>
 
 </body>
