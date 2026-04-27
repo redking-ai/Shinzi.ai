@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// Your Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyCfRMspgRtP-d3Jnha8DK7q4X8Buhj6qHA",
     authDomain: "shinzi-ai.firebaseapp.com",
@@ -12,32 +11,45 @@ const firebaseConfig = {
     measurementId: "G-P28XFTCSCX"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Logic for Login Button
-const loginBtn = document.getElementById('loginTrigger'); // Ensure your button has this ID
+// DOM Elements
+const loginBtn = document.getElementById('loginTrigger');
+const userProfile = document.getElementById('userProfile');
+const userPhoto = document.getElementById('userPhoto');
+const logoutBtn = document.getElementById('logoutBtn');
 
+// Sign In Logic
 if (loginBtn) {
     loginBtn.addEventListener('click', () => {
         signInWithPopup(auth, provider)
-            .then((result) => {
-                console.log("User signed in:", result.user);
-                window.location.href = "dashboard.html"; // Redirect after login
-            }).catch((error) => {
-                console.error("Auth Error:", error);
-            });
+            .catch((error) => console.error("Login Failed", error));
     });
 }
 
-// Logic to check if user is already logged in
+// Sign Out Logic
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        signOut(auth).then(() => {
+            window.location.reload();
+        });
+    });
+}
+
+// UI Sync Logic: Watch for User Login/Logout
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // If on homepage and logged in, send to dashboard
-        if (window.location.pathname.includes("index.html") || window.location.pathname === "/") {
-            window.location.href = "dashboard.html";
-        }
+        // USER IS LOGGED IN
+        loginBtn.style.display = "none";      // Hide Sign In
+        userProfile.style.display = "flex";   // Show Profile Area
+        userPhoto.src = user.photoURL;        // Set Google Photo
+        
+        console.log("Welcome,", user.displayName);
+    } else {
+        // USER IS LOGGED OUT
+        loginBtn.style.display = "block";
+        userProfile.style.display = "none";
     }
 });
