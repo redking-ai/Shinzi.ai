@@ -10,19 +10,25 @@
 <body>
 
     <nav class="navbar">
-        <div class="nav-left">
-            <div class="logo-circle">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 3L14.5 9L21 11.5L14.5 14L12 21L9.5 14L3 11.5L9.5 9L12 3Z" fill="black" />
-                </svg>
-            </div>
-            <span class="logo-text">Shinzi <span class="logo-ai">AI</span></span>
+    <div class="nav-left">
+        <div class="logo-circle">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 3L14.5 9L21 11.5L14.5 14L12 21L9.5 14L3 11.5L9.5 9L12 3Z" fill="black" />
+            </svg>
         </div>
-        <div class="nav-right">
-            <button class="btn-signin">Sign In</button>
+        <span class="logo-text">Shinzi <span class="logo-ai">AI</span></span>
+    </div>
+    
+    <div class="nav-right">
+        <button class="btn-signin" id="loginTrigger">Sign In</button>
+        
+        <div id="userProfile" class="user-profile" style="display: none;">
+            <img id="userPhoto" src="" alt="Profile">
+            <button id="logoutBtn" class="btn-logout">Sign Out</button>
         </div>
-    </nav>
-
+    </div>
+</nav>
+        
     <main class="hero-section">
         <div class="hero-center">
             <p class="overline">SHINZI AI • POWERED BY AI</p>
