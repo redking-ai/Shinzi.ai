@@ -101,3 +101,29 @@ input {
     text-align: center; color: var(--text-gray);
     font-size: 0.7rem; margin-top: 12px;
 }
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#userPhoto {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    object-fit: cover;
+}
+
+.btn-logout {
+    background: transparent;
+    border: none;
+    color: var(--text-gray);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.btn-logout:hover {
+    color: white;
+}
