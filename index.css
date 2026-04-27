@@ -1,15 +1,13 @@
-/* --- Core Variables --- */
 :root {
-    --bg-main: #0a0a0a; /* Deepest black from screenshot */
-    --bg-card: #171717; /* Card background color */
-    --text-primary: #ffffff;
-    --text-secondary: #a1a1aa; /* Specific gray used in the subtitle */
-    --text-muted: #71717a; /* Used for the overline */
-    --border-color: #27272a;
-    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    --bg-black: #0A0A0A;
+    --bg-card: #161616;
+    --border-color: #2A2A2A;
+    --text-main: #FFFFFF;
+    --text-muted: #8E8E8E;
+    --accent-white: #F5F5F5;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- Base Reset --- */
 * {
     margin: 0;
     padding: 0;
@@ -17,139 +15,211 @@
 }
 
 body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
-    font-family: var(--font-family);
-    min-height: 100vh;
+    background-color: var(--bg-black);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    -webkit-font-smoothing: antialiased;
 }
 
-/* --- Navbar (Exact Match) --- */
-.navbar {
+/* --- Navigation --- */
+.nav-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Very subtle separator */
+    padding: 16px 24px;
+    z-index: 10;
 }
 
-.brand {
+.logo {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 .logo-icon {
-    width: 32px;
-    height: 32px;
-    background-color: var(--text-primary);
-    color: var(--bg-main);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 6px; /* Modern rounded look */
 }
 
-.logo-icon svg {
-    width: 18px;
-    height: 18px;
-    stroke-width: 2.5px;
+.logo-text {
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: -0.5px;
 }
 
-.brand-name {
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+.logo-ai {
+    color: var(--text-muted);
 }
 
-.brand-suffix {
-    font-size: 1.15rem;
-    font-weight: 400;
-    color: var(--text-secondary);
-    margin-left: -4px;
+.btn-login {
+    background: transparent;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-login:hover {
+    background: var(--bg-card);
 }
 
 /* --- Main Layout --- */
-.container {
+.main-container {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding: 24px;
+    justify-content: center;
+    padding: 0 20px;
+    position: relative;
 }
 
 .hero {
-    max-width: 600px;
-    width: 100%;
     text-align: center;
+    margin-bottom: 40px;
+}
+
+.overline {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.heading {
+    font-size: 2.4rem;
+    font-weight: 600;
+    letter-spacing: -1px;
+}
+
+/* --- Suggestions Section --- */
+.interaction-zone {
+    width: 100%;
+    max-width: 720px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 20px;
 }
 
-/* --- Typography matching screenshot --- */
-.overline {
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+.suggestions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.suggestion-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     color: var(--text-muted);
-    margin-bottom: 16px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-.title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.04em;
-    margin-bottom: 20px;
+.suggestion-card:hover {
+    border-color: #444;
+    color: var(--text-main);
+    transform: translateY(-2px);
 }
 
-.subtitle {
-    font-size: 1.05rem;
-    color: var(--text-secondary);
-    margin-bottom: 40px;
-    font-weight: 400;
+.suggestion-card:active {
+    transform: scale(0.96);
 }
 
-/* --- Google Button (Styled like the cards in screenshot) --- */
-.google-btn {
+/* --- Chat Input Box --- */
+.input-container {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.input-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 8px 8px 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+}
+
+.input-wrapper:focus-within {
+    border-color: #555;
+}
+
+input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    padding: 12px 0;
+}
+
+input::placeholder {
+    color: var(--text-muted);
+}
+
+.send-btn {
+    background: var(--accent-white);
+    color: black;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    background-color: transparent;
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-    border-radius: 16px; /* Rounded corners like the dashboard cards */
-    padding: 16px 24px;
-    font-size: 1rem;
-    font-weight: 500;
-    font-family: inherit;
     cursor: pointer;
-    width: 100%;
-    max-width: 340px;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    transition: var(--transition);
 }
 
-.google-btn:hover {
-    background-color: var(--bg-card);
+.send-btn:hover {
+    opacity: 0.8;
 }
 
-.google-btn:active {
-    transform: scale(0.98);
+.footer-disclaimer {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 15px;
 }
 
-.google-logo {
-    width: 22px;
-    height: 22px;
-}
-
-/* --- Mobile Adjustments --- */
+/* --- Mobile Responsiveness --- */
 @media (max-width: 600px) {
-    .title {
-        font-size: 2.2rem;
+    .heading {
+        font-size: 1.8rem;
+    }
+    
+    .suggestions-grid {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .suggestion-card {
+        white-space: nowrap;
+    }
+
+    .input-wrapper {
+        border-radius: 24px;
     }
 }
