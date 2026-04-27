@@ -2,113 +2,68 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 body {
-  background: #0d0d0d;
+  background: radial-gradient(circle at top, #111, #000);
   color: #fff;
 }
 
 /* NAVBAR */
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
+  padding: 20px;
 }
 
 .logo {
   font-size: 18px;
-  font-weight: bold;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.profile {
-  background: #222;
-  padding: 8px 12px;
-  border-radius: 50%;
-  font-size: 14px;
-}
-
-.menu {
-  font-size: 20px;
-  cursor: pointer;
+  font-weight: 600;
+  opacity: 0.9;
 }
 
 /* HERO */
 .hero {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 100px;
   padding: 0 20px;
 }
 
 .subtitle {
-  color: #777;
   font-size: 12px;
+  color: #777;
   letter-spacing: 2px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .hero h1 {
-  font-size: 28px;
+  font-size: 32px;
+  font-weight: 600;
   margin-bottom: 10px;
 }
 
 .desc {
   color: #aaa;
+  margin-bottom: 30px;
+}
+
+/* BUTTON */
+.google-btn {
+  background: #fff;
+  color: #000;
+  padding: 14px 20px;
+  border-radius: 30px;
+  border: none;
   font-size: 14px;
-}
-
-/* OPTIONS */
-.options {
-  margin-top: 40px;
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-/* CARD */
-.card {
-  background: #161616;
-  padding: 15px;
-  border-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  font-weight: 500;
   cursor: pointer;
   transition: 0.3s;
 }
 
-.card:hover {
-  background: #1f1f1f;
+/* TOUCH ANIMATION */
+.google-btn:active {
+  transform: scale(0.95);
 }
 
-.card .icon {
-  font-size: 20px;
-  margin-right: 10px;
-}
-
-.card div {
-  flex: 1;
-}
-
-.card h3 {
-  font-size: 16px;
-}
-
-.card p {
-  font-size: 12px;
-  color: #888;
-}
-
-.card span {
-  font-size: 18px;
-  color: #aaa;
+.google-btn:hover {
+  opacity: 0.85;
 }
