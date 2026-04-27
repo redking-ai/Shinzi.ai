@@ -5,77 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shinzi AI</title>
   <link rel="stylesheet" href="index.css">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
 </head>
 <body>
 
   <!-- NAVBAR -->
   <header class="navbar">
-    <div class="logo">
-      ✦ Shinzi AI
-    </div>
-
-    <div class="nav-right">
-      <div class="profile">SB</div>
-      <div class="menu">☰</div>
-    </div>
+    <div class="logo">✦ Shinzi AI</div>
   </header>
 
   <!-- HERO -->
   <section class="hero">
     <p class="subtitle">SHINZI AI • POWERED BY AI</p>
     <h1>What can I help you with?</h1>
-    <p class="desc">Pick a starting point — or just ask anything below.</p>
+    <p class="desc">Sign in to continue</p>
+
+    <!-- GOOGLE LOGIN -->
+    <button id="loginBtn" class="google-btn">
+      Continue with Google
+    </button>
   </section>
 
-  <!-- OPTIONS -->
-  <section class="options">
-
-    <div class="card">
-      <div class="icon">🌐</div>
-      <div>
-        <h3>Make me a website</h3>
-        <p>Tap to start</p>
-      </div>
-      <span>→</span>
-    </div>
-
-    <div class="card">
-      <div class="icon">📱</div>
-      <div>
-        <h3>Build me an app</h3>
-        <p>Tap to start</p>
-      </div>
-      <span>→</span>
-    </div>
-
-    <div class="card">
-      <div class="icon">📖</div>
-      <div>
-        <h3>Help me study</h3>
-        <p>Tap to start</p>
-      </div>
-      <span>→</span>
-    </div>
-
-    <div class="card">
-      <div class="icon">🔍</div>
-      <div>
-        <h3>Deep research</h3>
-        <p>Tap to start</p>
-      </div>
-      <span>→</span>
-    </div>
-
-    <div class="card">
-      <div class="icon">&lt;/&gt;</div>
-      <div>
-        <h3>Generate code</h3>
-        <p>Tap to start</p>
-      </div>
-      <span>→</span>
-    </div>
-
-  </section>
+  <script src="firebase.js"></script>
+  <script src="auth.js"></script>
 
 </body>
 </html>
