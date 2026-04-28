@@ -7,22 +7,18 @@ const chatWindow = document.getElementById('chatWindow');
 const welcomeScreen = document.getElementById('welcomeScreen');
 const suggestions = document.getElementById('suggestions');
 
-// Function to add messages to the screen
 function appendMessage(role, text) {
     const msgDiv = document.createElement('div');
     msgDiv.className = `message ${role}-message`;
     msgDiv.innerText = text;
     chatWindow.appendChild(msgDiv);
+    chatWindow.style.display = "flex";
+    welcomeScreen.style.display = "none";
+    suggestions.style.display = "none";
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
 
 async function askGemini(prompt) {
-    // 1. Hide welcome screen and show chat
-    welcomeScreen.style.display = "none";
-    suggestions.style.display = "none";
-    chatWindow.style.display = "flex";
-
-    // 2. Show User Message
     appendMessage('user', prompt);
     chatInput.value = "";
 
@@ -37,31 +33,21 @@ async function askGemini(prompt) {
 
         const data = await response.json();
         const aiText = data.candidates[0].content.parts[0].text;
-
-        // 3. Show AI Message
         appendMessage('ai', aiText);
     } catch (error) {
-        appendMessage('ai', "Sorry, I'm having trouble connecting to my brain right now.");
-        console.error(error);
+        appendMessage('ai', "Error connecting to Shinzi AI. Check your API key.");
     }
 }
 
-// Listen for Send button click
 sendBtn.onclick = () => {
-    if (chatInput.value.trim() !== "") {
-        askGemini(chatInput.value);
-    }
+    if (chatInput.value.trim() !== "") askGemini(chatInput.value);
 };
 
-// Listen for "Enter" key
-chatInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter" && chatInput.value.trim() !== "") {
-        askGemini(chatInput.value);
-    }
-});
+chatInput.onkeypress = (e) => {
+    if (e.key === "Enter" && chatInput.value.trim() !== "") askGemini(chatInput.value);
+};
 
-// Make suggestions clickable
+// This connects the HTML buttons to the code
 window.setPrompt = (text) => {
-    chatInput.value = text;
     askGemini(text);
 };
