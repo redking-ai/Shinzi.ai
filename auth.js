@@ -9,6 +9,7 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
+// 🔑 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCfRMspgRtP-d3Jnha8DK7q4X8Buhj6qHA",
   authDomain: "shinzi-ai.firebaseapp.com",
@@ -19,111 +20,73 @@ const firebaseConfig = {
   measurementId: "G-P28XFTCSCX"
 };
 
+// ✅ INIT
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+// 🌐 GLOBAL
 window.ShinziAuth = {
-  auth,
-  currentUser: null,
   signIn: async () => {
-    const isMobile =
-      window.matchMedia("(max-width: 768px)").matches ||
-      navigator.maxTouchPoints > 0;
+    const isMobile = /Android|iPhone/i.test(navigator.userAgent);
 
     if (isMobile) {
       await signInWithRedirect(auth, provider);
-      return;
+    } else {
+      await signInWithPopup(auth, provider);
     }
-
-    return signInWithPopup(auth, provider);
   },
   signOut: () => signOut(auth)
 };
 
-function initialsFromUser(user) {
-  const name = (user?.displayName || user?.email || "SB").trim();
-  const parts = name.split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
-
-function syncAuthUI(user) {
-  const loginBtn = document.getElementById("loginTrigger");
-  const userProfile = document.getElementById("userProfile");
-  const userPhoto = document.getElementById("userPhoto");
-  const userAvatar = document.getElementById("userAvatar");
-
-  if (!loginBtn || !userProfile || !userPhoto || !userAvatar) return;
-
-  if (user) {
-    loginBtn.classList.add("hidden");
-    userProfile.classList.remove("hidden");
-    userAvatar.textContent = initialsFromUser(user);
-
-    if (user.photoURL) {
-      userPhoto.src = user.photoURL;
-      userPhoto.classList.remove("hidden");
-      userAvatar.classList.add("hidden");
-    } else {
-      userPhoto.removeAttribute("src");
-      userPhoto.classList.add("hidden");
-      userAvatar.classList.remove("hidden");
-    }
-  } else {
-    loginBtn.classList.remove("hidden");
-    userProfile.classList.add("hidden");
-    userPhoto.removeAttribute("src");
-    userPhoto.classList.add("hidden");
-    userAvatar.classList.remove("hidden");
-    userAvatar.textContent = "SB";
-  }
-}
-
-function emitAuthChange(user) {
-  window.ShinziAuth.currentUser = user;
-  window.dispatchEvent(new CustomEvent("shinzi-auth-changed", { detail: { user } }));
-}
-
+// 🔥 MAIN
 document.addEventListener("DOMContentLoaded", async () => {
-  const loginBtn = document.getElementById("loginTrigger");
-  const logoutBtn = document.getElementById("logoutBtn");
 
+  // ✅ HANDLE REDIRECT RESULT
   try {
     const result = await getRedirectResult(auth);
     if (result?.user) {
-      console.log("Redirect login success:", result.user);
+      console.log("Logged in:", result.user.email);
     }
-  } catch (error) {
-    console.error("Redirect error:", error);
+  } catch (err) {
+    console.error("Redirect error:", err);
   }
 
+  const loginBtn = document.getElementById("loginTrigger");
+  const logoutBtn = document.getElementById("logoutBtn");
+
   if (loginBtn) {
-    loginBtn.addEventListener("click", async () => {
+    loginBtn.onclick = async () => {
       try {
         await window.ShinziAuth.signIn();
-      } catch (error) {
-        console.error("Login failed:", error);
-        alert("Login failed. Check Firebase setup and authorized domains.");
+      } catch (err) {
+        alert("Login failed");
+        console.error(err);
       }
-    });
+    };
   }
 
   if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      try {
-        await window.ShinziAuth.signOut();
-      } catch (error) {
-        console.error("Logout failed:", error);
-        alert("Sign out failed.");
-      }
-    });
+    logoutBtn.onclick = async () => {
+      await window.ShinziAuth.signOut();
+      location.reload();
+    };
   }
 
+  // ✅ AUTH STATE
   onAuthStateChanged(auth, (user) => {
-    syncAuthUI(user);
-    emitAuthChange(user);
+    console.log("User:", user);
+
+    const loginBtn = document.getElementById("loginTrigger");
+    const userProfile = document.getElementById("userProfile");
+
+    if (user) {
+      if (loginBtn) loginBtn.style.display = "none";
+      if (userProfile) userProfile.style.display = "flex";
+    } else {
+      if (loginBtn) loginBtn.style.display = "block";
+      if (userProfile) userProfile.style.display = "none";
+    }
   });
+
 });
