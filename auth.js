@@ -9,7 +9,29 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
+  apiKey: "<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfRMspgRtP-d3Jnha8DK7q4X8Buhj6qHA",
+    authDomain: "shinzi-ai.firebaseapp.com",
+    projectId: "shinzi-ai",
+    storageBucket: "shinzi-ai.firebasestorage.app",
+    messagingSenderId: "650971065920",
+    appId: "1:650971065920:web:cce30c99c3a9572b95f9a5",
+    measurementId: "G-P28XFTCSCX"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>",
   authDomain: "shinzi-ai.firebaseapp.com",
   projectId: "shinzi-ai",
   storageBucket: "shinzi-ai.firebasestorage.app",
@@ -26,12 +48,15 @@ window.ShinziAuth = {
   auth,
   currentUser: null,
   signIn: async () => {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches || navigator.maxTouchPoints > 0;
+    const isMobile =
+      window.matchMedia("(max-width: 768px)").matches ||
+      navigator.maxTouchPoints > 0;
+
     if (isMobile) {
       await signInWithRedirect(auth, provider);
-      return;
+    } else {
+      return signInWithPopup(auth, provider);
     }
-    return signInWithPopup(auth, provider);
   },
   signOut: () => signOut(auth)
 };
@@ -39,7 +64,9 @@ window.ShinziAuth = {
 function initialsFromUser(user) {
   const name = (user?.displayName || user?.email || "SB").trim();
   const parts = name.split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
   return name.slice(0, 2).toUpperCase();
 }
 
@@ -77,7 +104,9 @@ function syncAuthUI(user) {
 
 function emitAuthChange(user) {
   window.ShinziAuth.currentUser = user;
-  window.dispatchEvent(new CustomEvent("shinzi-auth-changed", { detail: { user } }));
+  window.dispatchEvent(
+    new CustomEvent("shinzi-auth-changed", { detail: { user } })
+  );
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -90,28 +119,21 @@ document.addEventListener("DOMContentLoaded", () => {
         await window.ShinziAuth.signIn();
       } catch (error) {
         console.error("Login failed:", error);
-        alert("Login failed. Check Google sign-in, authorized domains, and your Firebase config.");
+        alert("Login failed. Check Firebase setup.");
       }
     });
   }
 
-  if (loginBtn) {
-  loginBtn.addEventListener("click", async () => {
-    try {
-      const isMobile = window.matchMedia("(max-width: 768px)").matches || navigator.maxTouchPoints > 0;
-
-      if (isMobile) {
-        // better for mobile browsers
-        await signInWithRedirect(auth, provider);
-      } else {
-        await signInWithPopup(auth, provider);
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await window.ShinziAuth.signOut();
+      } catch (error) {
+        console.error("Logout failed:", error);
+        alert("Sign out failed.");
       }
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert(`Login failed: ${error.code || error.message}`);
-    }
-  });
-}
+    });
+  }
 
   onAuthStateChanged(auth, (user) => {
     syncAuthUI(user);
