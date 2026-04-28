@@ -95,16 +95,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      try {
-        await window.ShinziAuth.signOut();
-      } catch (error) {
-        console.error("Logout failed:", error);
-        alert("Sign out failed.");
+  if (loginBtn) {
+  loginBtn.addEventListener("click", async () => {
+    try {
+      const isMobile = window.matchMedia("(max-width: 768px)").matches || navigator.maxTouchPoints > 0;
+
+      if (isMobile) {
+        // better for mobile browsers
+        await signInWithRedirect(auth, provider);
+      } else {
+        await signInWithPopup(auth, provider);
       }
-    });
-  }
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert(`Login failed: ${error.code || error.message}`);
+    }
+  });
+}
 
   onAuthStateChanged(auth, (user) => {
     syncAuthUI(user);
