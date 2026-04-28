@@ -9,7 +9,6 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
-// 🔑 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCfRMspgRtP-d3Jnha8DK7q4X8Buhj6qHA",
   authDomain: "shinzi-ai.firebaseapp.com",
@@ -20,70 +19,65 @@ const firebaseConfig = {
   measurementId: "G-P28XFTCSCX"
 };
 
-// ✅ INIT
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// 🌐 GLOBAL
-window.ShinziAuth = {
-  signIn: async () => {
-    const isMobile = /Android|iPhone/i.test(navigator.userAgent);
+// 🔐 SIGN IN
+async function signInUser() {
+  const isMobile =
+    /Android|iPhone|iPad/i.test(navigator.userAgent) ||
+    window.matchMedia("(max-width: 768px)").matches;
 
-    if (isMobile) {
-      await signInWithRedirect(auth, provider);
-    } else {
-      await signInWithPopup(auth, provider);
-    }
-  },
-  signOut: () => signOut(auth)
-};
+  if (isMobile) {
+    await signInWithRedirect(auth, provider);
+  } else {
+    await signInWithPopup(auth, provider);
+  }
+}
 
-// 🔥 MAIN
+// 🔐 SIGN OUT
+async function signOutUser() {
+  await signOut(auth);
+  location.reload();
+}
+
+// 🚀 MAIN
 document.addEventListener("DOMContentLoaded", async () => {
 
-  // ✅ HANDLE REDIRECT RESULT
+  // 🔥 FIX: handle redirect login
   try {
     const result = await getRedirectResult(auth);
     if (result?.user) {
-      console.log("Logged in:", result.user.email);
+      console.log("Login success:", result.user);
     }
-  } catch (err) {
-    console.error("Redirect error:", err);
+  } catch (error) {
+    console.error("Redirect error:", error);
   }
 
   const loginBtn = document.getElementById("loginTrigger");
   const logoutBtn = document.getElementById("logoutBtn");
+  const userProfile = document.getElementById("userProfile");
 
   if (loginBtn) {
-    loginBtn.onclick = async () => {
-      try {
-        await window.ShinziAuth.signIn();
-      } catch (err) {
-        alert("Login failed");
-        console.error(err);
-      }
-    };
+    loginBtn.onclick = signInUser;
   }
 
   if (logoutBtn) {
-    logoutBtn.onclick = async () => {
-      await window.ShinziAuth.signOut();
-      location.reload();
-    };
+    logoutBtn.onclick = signOutUser;
   }
 
-  // ✅ AUTH STATE
+  // 👤 AUTH STATE
   onAuthStateChanged(auth, (user) => {
-    console.log("User:", user);
-
-    const loginBtn = document.getElementById("loginTrigger");
-    const userProfile = document.getElementById("userProfile");
-
     if (user) {
+      console.log("User logged in:", user.email);
+
       if (loginBtn) loginBtn.style.display = "none";
       if (userProfile) userProfile.style.display = "flex";
+
     } else {
+      console.log("No user");
+
       if (loginBtn) loginBtn.style.display = "block";
       if (userProfile) userProfile.style.display = "none";
     }
