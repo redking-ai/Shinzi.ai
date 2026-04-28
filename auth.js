@@ -1,94 +1,109 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
-// Your Firebase Config (Verified)
 const firebaseConfig = {
-    apiKey: "AIzaSyCfRMspgRtP-d3Jnha8DK7q4X8Buhj6qHA",
-    authDomain: "shinzi-ai.firebaseapp.com",
-    projectId: "shinzi-ai",
-    storageBucket: "shinzi-ai.firebasestorage.app",
-    messagingSenderId: "650971065920",
-    appId: "1:650971065920:web:cce30c99c3a9572b95f9a5",
-    measurementId: "G-P28XFTCSCX"
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "shinzi-ai.firebaseapp.com",
+  projectId: "shinzi-ai",
+  storageBucket: "shinzi-ai.firebasestorage.app",
+  messagingSenderId: "650971065920",
+  appId: "1:650971065920:web:cce30c99c3a9572b95f9a5",
+  measurementId: "G-P28XFTCSCX"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// --- FREE TIER LOGIC ---
-let messageCount = 0;
-const MAX_FREE_MESSAGES = 30; // Based on your Free Tier plan
+window.ShinziAuth = {
+  auth,
+  currentUser: null,
+  signIn: () => signInWithPopup(auth, provider),
+  signOut: () => signOut(auth)
+};
 
-// --- UI Logic ---
-window.addEventListener('DOMContentLoaded', () => {
-    const loginBtn = document.getElementById('loginTrigger');
-    const userProfile = document.getElementById('userProfile');
-    const userPhoto = document.getElementById('userPhoto');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const sendBtn = document.getElementById('sendBtn');
-    const chatInput = document.getElementById('chatInput');
+function initialsFromUser(user) {
+  const name = (user?.displayName || user?.email || "SB").trim();
+  const parts = name.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+  return name.slice(0, 2).toUpperCase();
+}
 
-    // 1. Google Sign-In Logic
-    if (loginBtn) {
-        loginBtn.onclick = () => {
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    console.log("Logged in as:", result.user.displayName);
-                })
-                .catch((error) => {
-                    console.error("Auth Error:", error);
-                    alert("Login failed. Make sure your domain is authorized in Firebase!");
-                });
-        };
+function syncAuthUI(user) {
+  const loginBtn = document.getElementById("loginTrigger");
+  const userProfile = document.getElementById("userProfile");
+  const userPhoto = document.getElementById("userPhoto");
+  const userAvatar = document.getElementById("userAvatar");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (!loginBtn || !userProfile || !userPhoto || !userAvatar || !logoutBtn) return;
+
+  if (user) {
+    loginBtn.classList.add("hidden");
+    userProfile.classList.remove("hidden");
+
+    userAvatar.textContent = initialsFromUser(user);
+
+    if (user.photoURL) {
+      userPhoto.src = user.photoURL;
+      userPhoto.classList.remove("hidden");
+      userAvatar.classList.add("hidden");
+    } else {
+      userPhoto.removeAttribute("src");
+      userPhoto.classList.add("hidden");
+      userAvatar.classList.remove("hidden");
     }
+  } else {
+    loginBtn.classList.remove("hidden");
+    userProfile.classList.add("hidden");
+    userPhoto.removeAttribute("src");
+    userPhoto.classList.add("hidden");
+    userAvatar.classList.remove("hidden");
+    userAvatar.textContent = "SB";
+  }
+}
 
-    // 2. Logout Logic
-    if (logoutBtn) {
-        logoutBtn.onclick = () => {
-            signOut(auth).then(() => {
-                window.location.reload();
-            });
-        };
-    }
+function emitAuthChange(user) {
+  window.ShinziAuth.currentUser = user;
+  window.dispatchEvent(new CustomEvent("shinzi-auth-changed", { detail: { user } }));
+}
 
-    // 3. The "Silent Watcher" - Detects if user is logged in or out
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            // User is logged in: Swap button for profile photo
-            if (loginBtn) loginBtn.style.display = "none";
-            if (userProfile) userProfile.style.display = "flex";
-            if (userPhoto) userPhoto.src = user.photoURL;
-            console.log("Auth State: User Active");
-        } else {
-            // User is logged out: Show sign-in button
-            if (loginBtn) loginBtn.style.display = "block";
-            if (userProfile) userProfile.style.display = "none";
-            console.log("Auth State: No User");
-        }
+document.addEventListener("DOMContentLoaded", () => {
+  const loginBtn = document.getElementById("loginTrigger");
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  if (loginBtn) {
+    loginBtn.addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (error) {
+        console.error("Login failed:", error);
+        alert("Login failed. Check that Google sign-in is enabled in Firebase and your domain is authorized.");
+      }
     });
+  }
 
-    // 4. Message Limit Checker
-    if (sendBtn) {
-        sendBtn.onclick = () => {
-            if (!auth.currentUser) {
-                alert("Please Sign In first to message Shinzi AI!");
-                return;
-            }
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("Logout failed:", error);
+        alert("Sign out failed.");
+      }
+    });
+  }
 
-            if (messageCount >= MAX_FREE_MESSAGES) {
-                alert("You've reached the 30-message limit for today! Upgrade to Shinzi+ for more.");
-                return;
-            }
-
-            // If we are under the limit, we would call the Gemini 3 Flash API here
-            const message = chatInput.value;
-            if (message.trim() !== "") {
-                messageCount++;
-                console.log(`Messages used: ${messageCount}/${MAX_FREE_MESSAGES}`);
-                chatInput.value = ""; // Clear input
-            }
-        };
-    }
+  onAuthStateChanged(auth, (user) => {
+    syncAuthUI(user);
+    emitAuthChange(user);
+  });
 });
