@@ -3,6 +3,7 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
@@ -24,16 +25,21 @@ const provider = new GoogleAuthProvider();
 window.ShinziAuth = {
   auth,
   currentUser: null,
-  signIn: () => signInWithPopup(auth, provider),
+  signIn: async () => {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches || navigator.maxTouchPoints > 0;
+    if (isMobile) {
+      await signInWithRedirect(auth, provider);
+      return;
+    }
+    return signInWithPopup(auth, provider);
+  },
   signOut: () => signOut(auth)
 };
 
 function initialsFromUser(user) {
   const name = (user?.displayName || user?.email || "SB").trim();
   const parts = name.split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  }
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
   return name.slice(0, 2).toUpperCase();
 }
 
@@ -42,14 +48,12 @@ function syncAuthUI(user) {
   const userProfile = document.getElementById("userProfile");
   const userPhoto = document.getElementById("userPhoto");
   const userAvatar = document.getElementById("userAvatar");
-  const logoutBtn = document.getElementById("logoutBtn");
 
-  if (!loginBtn || !userProfile || !userPhoto || !userAvatar || !logoutBtn) return;
+  if (!loginBtn || !userProfile || !userPhoto || !userAvatar) return;
 
   if (user) {
     loginBtn.classList.add("hidden");
     userProfile.classList.remove("hidden");
-
     userAvatar.textContent = initialsFromUser(user);
 
     if (user.photoURL) {
@@ -83,10 +87,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (loginBtn) {
     loginBtn.addEventListener("click", async () => {
       try {
-        await signInWithPopup(auth, provider);
+        await window.ShinziAuth.signIn();
       } catch (error) {
         console.error("Login failed:", error);
-        alert("Login failed. Check that Google sign-in is enabled in Firebase and your domain is authorized.");
+        alert("Login failed. Check Google sign-in, authorized domains, and your Firebase config.");
       }
     });
   }
@@ -94,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
       try {
-        await signOut(auth);
+        await window.ShinziAuth.signOut();
       } catch (error) {
         console.error("Logout failed:", error);
         alert("Sign out failed.");
