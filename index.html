@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Shinzi AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=1.2">
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
 
@@ -18,46 +18,58 @@
             </div>
             <span class="logo-text">Shinzi <span class="logo-ai">AI</span></span>
         </div>
-
         <div class="nav-right">
-            <button class="btn-signin" id="loginTrigger">Sign In</button>
-            <div id="userProfile" class="user-profile" style="display: none;">
-                <img id="userPhoto" src="" alt="User">
+            <div id="userProfile" class="user-profile">
+                <div class="user-avatar">SB</div>
                 <button id="logoutBtn" class="btn-logout">Sign Out</button>
             </div>
         </div>
     </nav>
 
-    <main class="hero-section">
-        <div id="welcomeScreen" class="hero-center">
-            <p class="overline">SHINZI AI • POWERED BY AI</p>
+    <main class="app-container">
+        <div id="welcomeScreen" class="welcome-screen">
+            <p class="overline">SHINZI AI • POWERED BY GEMINI 3</p>
             <h1 class="main-title">What can I help you with?</h1>
+            <p class="subtitle">Pick a starting point — or just ask anything below.</p>
         </div>
 
         <div id="chatWindow" class="chat-window"></div>
 
-        <div class="interaction-area">
-            <div id="suggestions" class="suggestions-container">
-                <button class="card" onclick="window.setPrompt('Make me a website')">Make me a website</button>
-                <button class="card" onclick="window.setPrompt('Build me an app')">Build me an app</button>
-                <button class="card" onclick="window.setPrompt('Help me study')">Help me study</button>
-                <button class="card" onclick="window.setPrompt('Deep research')">Deep research</button>
-                <button class="card" onclick="window.setPrompt('Generate code')">Generate code</button>
-            </div>
-
-            <div class="input-box">
-                <input type="text" id="chatInput" placeholder="Message Shinzi AI...">
-                <button class="send-icon" id="sendBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M7 11L12 6L17 11M12 18V7" />
-                    </svg>
+        <div class="bottom-controls">
+            <div id="suggestions" class="suggestions-grid">
+                <button class="card" onclick="handleSuggestion('Make me a website')">
+                    <span class="card-icon">🌐</span>
+                    <div class="card-content"><strong>Make me a website</strong><p>Tap to start</p></div>
+                </button>
+                <button class="card" onclick="handleSuggestion('Build me an app')">
+                    <span class="card-icon">📱</span>
+                    <div class="card-content"><strong>Build me an app</strong><p>Tap to start</p></div>
+                </button>
+                <button class="card" onclick="handleSuggestion('Help me study')">
+                    <span class="card-icon">📖</span>
+                    <div class="card-content"><strong>Help me study</strong><p>Tap to start</p></div>
+                </button>
+                <button class="card" onclick="handleSuggestion('Deep research')">
+                    <span class="card-icon">🔍</span>
+                    <div class="card-content"><strong>Deep research</strong><p>Tap to start</p></div>
                 </button>
             </div>
-            <p class="disclaimer">Shinzi AI can make mistakes. Check important info.</p>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <input type="text" id="chatInput" placeholder="Ask anything..." autocomplete="off">
+                    <button id="sendBtn" class="send-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="19" x2="12" y2="5"></line>
+                            <polyline points="5 12 12 5 19 12"></polyline>
+                        </svg>
+                    </button>
+                </div>
+                <p class="disclaimer">Shinzi AI may produce inaccurate info.</p>
+            </div>
         </div>
     </main>
 
-    <script type="module" src="auth.js"></script>
-    <script type="module" src="chat.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
