@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shinzi AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=1.1">
+    <link rel="stylesheet" href="index.css?v=1.2">
 </head>
 <body>
 
@@ -21,14 +21,14 @@
 
         <div class="nav-right">
             <button class="btn-signin" id="loginTrigger">Sign In</button>
-
             <div id="userProfile" class="user-profile" style="display: none;">
                 <img id="userPhoto" src="" alt="User">
                 <button id="logoutBtn" class="btn-logout">Sign Out</button>
             </div>
         </div>
-    
-<main class="hero-section">
+    </nav>
+
+    <main class="hero-section">
         <div id="welcomeScreen" class="hero-center">
             <p class="overline">SHINZI AI • POWERED BY AI</p>
             <h1 class="main-title">What can I help you with?</h1>
@@ -38,11 +38,11 @@
 
         <div class="interaction-area">
             <div id="suggestions" class="suggestions-container">
-                <button class="card" onclick="setPrompt('Make me a website')">Make me a website</button>
-                <button class="card" onclick="setPrompt('Build me an app')">Build me an app</button>
-                <button class="card" onclick="setPrompt('Help me study')">Help me study</button>
-                <button class="card" onclick="setPrompt('Deep research')">Deep research</button>
-                <button class="card" onclick="setPrompt('Generate code')">Generate code</button>
+                <button class="card" onclick="window.setPrompt('Make me a website')">Make me a website</button>
+                <button class="card" onclick="window.setPrompt('Build me an app')">Build me an app</button>
+                <button class="card" onclick="window.setPrompt('Help me study')">Help me study</button>
+                <button class="card" onclick="window.setPrompt('Deep research')">Deep research</button>
+                <button class="card" onclick="window.setPrompt('Generate code')">Generate code</button>
             </div>
 
             <div class="input-box">
@@ -57,8 +57,7 @@
         </div>
     </main>
 
-    <script type="module" src="chat.js"></script>
-
     <script type="module" src="auth.js"></script>
+    <script type="module" src="chat.js"></script>
 </body>
 </html>
