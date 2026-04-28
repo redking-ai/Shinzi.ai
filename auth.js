@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "PASTE_YOUR_REAL_FIREBASE_API_KEY_HERE",
+  apiKey: "AIzaSyCfRMspgRtP-d3Jnha8DK7q4X8Buhj6qHA",
   authDomain: "shinzi-ai.firebaseapp.com",
   projectId: "shinzi-ai",
   storageBucket: "shinzi-ai.firebasestorage.app",
