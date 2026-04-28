@@ -1,16 +1,16 @@
-alert("AUTH LOADED");
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
   signInWithRedirect,
+  getRedirectResult,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCfRMspgRtP-d3Jnha8DK7q4X8Buhj6qHA",
+  apiKey: "PASTE_YOUR_REAL_FIREBASE_API_KEY_HERE",
   authDomain: "shinzi-ai.firebaseapp.com",
   projectId: "shinzi-ai",
   storageBucket: "shinzi-ai.firebasestorage.app",
@@ -33,9 +33,10 @@ window.ShinziAuth = {
 
     if (isMobile) {
       await signInWithRedirect(auth, provider);
-    } else {
-      return signInWithPopup(auth, provider);
+      return;
     }
+
+    return signInWithPopup(auth, provider);
   },
   signOut: () => signOut(auth)
 };
@@ -83,14 +84,21 @@ function syncAuthUI(user) {
 
 function emitAuthChange(user) {
   window.ShinziAuth.currentUser = user;
-  window.dispatchEvent(
-    new CustomEvent("shinzi-auth-changed", { detail: { user } })
-  );
+  window.dispatchEvent(new CustomEvent("shinzi-auth-changed", { detail: { user } }));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const loginBtn = document.getElementById("loginTrigger");
   const logoutBtn = document.getElementById("logoutBtn");
+
+  try {
+    const result = await getRedirectResult(auth);
+    if (result?.user) {
+      console.log("Redirect login success:", result.user);
+    }
+  } catch (error) {
+    console.error("Redirect error:", error);
+  }
 
   if (loginBtn) {
     loginBtn.addEventListener("click", async () => {
@@ -98,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await window.ShinziAuth.signIn();
       } catch (error) {
         console.error("Login failed:", error);
-        alert("Login failed. Check Firebase setup.");
+        alert("Login failed. Check Firebase setup and authorized domains.");
       }
     });
   }
