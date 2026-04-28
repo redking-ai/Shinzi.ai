@@ -27,21 +27,22 @@
                 <button id="logoutBtn" class="btn-logout">Sign Out</button>
             </div>
         </div>
-    </nav>
-
-    <main class="hero-section">
-        <div class="hero-center">
+    
+<main class="hero-section">
+        <div id="welcomeScreen" class="hero-center">
             <p class="overline">SHINZI AI • POWERED BY AI</p>
             <h1 class="main-title">What can I help you with?</h1>
         </div>
 
+        <div id="chatWindow" class="chat-window"></div>
+
         <div class="interaction-area">
-            <div class="suggestions-container">
-                <button class="card">Make me a website</button>
-                <button class="card">Build me an app</button>
-                <button class="card">Help me study</button>
-                <button class="card">Deep research</button>
-                <button class="card">Generate code</button>
+            <div id="suggestions" class="suggestions-container">
+                <button class="card" onclick="setPrompt('Make me a website')">Make me a website</button>
+                <button class="card" onclick="setPrompt('Build me an app')">Build me an app</button>
+                <button class="card" onclick="setPrompt('Help me study')">Help me study</button>
+                <button class="card" onclick="setPrompt('Deep research')">Deep research</button>
+                <button class="card" onclick="setPrompt('Generate code')">Generate code</button>
             </div>
 
             <div class="input-box">
@@ -55,6 +56,8 @@
             <p class="disclaimer">Shinzi AI can make mistakes. Check important info.</p>
         </div>
     </main>
+
+    <script type="module" src="chat.js"></script>
 
     <script type="module" src="auth.js"></script>
 </body>
