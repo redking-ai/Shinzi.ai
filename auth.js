@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -7,31 +7,25 @@ import {
   getRedirectResult,
   onAuthStateChanged,
   signOut
-} from "https://www.gstatic.com/firebasejs/12.12.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// 🔑 Firebase config (your real one)
 const firebaseConfig = {
   apiKey: "AIzaSyCfRMspgRtP-d3Jnha8DK7q4X8Buhj6qHA",
   authDomain: "shinzi-ai.firebaseapp.com",
   projectId: "shinzi-ai",
   storageBucket: "shinzi-ai.firebasestorage.app",
   messagingSenderId: "650971065920",
-  appId: "1:650971065920:web:cce30c99c3a9572b95f9a5",
-  measurementId: "G-P28XFTCSCX"
+  appId: "1:650971065920:web:cce30c99c3a9572b95f9a5"
 };
 
-// ✅ INIT
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// 🔐 SIGN IN
+const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
 async function signInUser() {
   try {
-    const isMobile =
-      /Android|iPhone|iPad/i.test(navigator.userAgent) ||
-      window.matchMedia("(max-width: 768px)").matches;
-
     if (isMobile) {
       await signInWithRedirect(auth, provider);
     } else {
@@ -39,60 +33,83 @@ async function signInUser() {
     }
   } catch (err) {
     console.error("Login error:", err);
-    alert("Login failed");
+    if (err.code !== "auth/popup-closed-by-user") {
+      alert("Login failed: " + err.message);
+    }
   }
 }
 
-// 🔐 SIGN OUT
 async function signOutUser() {
   try {
     await signOut(auth);
-    location.reload();
   } catch (err) {
     console.error("Logout error:", err);
   }
 }
 
-// 🚀 MAIN
-document.addEventListener("DOMContentLoaded", async () => {
+// Expose globally for script.js
+window.ShinziAuth = {
+  signIn: signInUser,
+  signOut: signOutUser,
+  get currentUser() { return auth.currentUser; }
+};
 
+// Handle redirect result ONCE on page load (mobile only)
+if (isMobile) {
+  getRedirectResult(auth)
+    .then((result) => {
+      if (result?.user) {
+        console.log("Redirect login success:", result.user.email);
+      }
+    })
+    .catch((err) => {
+      if (err.code !== "auth/no-auth-event") {
+        console.error("Redirect result error:", err);
+      }
+    });
+}
+
+// Wait for DOM before touching UI
+document.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.getElementById("loginTrigger");
   const logoutBtn = document.getElementById("logoutBtn");
   const userProfile = document.getElementById("userProfile");
+  const userPhoto = document.getElementById("userPhoto");
+  const userAvatar = document.getElementById("userAvatar");
 
-  // 🔥 Handle redirect (VERY IMPORTANT FOR MOBILE)
-  try {
-    const result = await getRedirectResult(auth);
-    if (result?.user) {
-      console.log("Redirect login success:", result.user.email);
-    }
-  } catch (err) {
-    console.error("Redirect error:", err);
-  }
+  if (loginBtn) loginBtn.addEventListener("click", signInUser);
+  if (logoutBtn) logoutBtn.addEventListener("click", signOutUser);
 
-  // 👆 CLICK HANDLERS
-  if (loginBtn) {
-    loginBtn.onclick = signInUser;
-  }
-
-  if (logoutBtn) {
-    logoutBtn.onclick = signOutUser;
-  }
-
-  // 👤 AUTH STATE (this controls UI)
   onAuthStateChanged(auth, (user) => {
-    console.log("Auth state:", user);
-
     if (user) {
-      // user logged in
-      if (loginBtn) loginBtn.style.display = "none";
-      if (userProfile) userProfile.style.display = "flex";
+      // Logged in
+      loginBtn.style.display = "none";
+      userProfile.style.display = "flex";
 
+      // Set avatar
+      if (user.photoURL) {
+        userPhoto.src = user.photoURL;
+        userPhoto.classList.remove("hidden");
+        userAvatar.style.display = "none";
+      } else {
+        const initials = (user.displayName || "U")
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2);
+        userAvatar.textContent = initials;
+        userAvatar.style.display = "grid";
+        userPhoto.classList.add("hidden");
+      }
+
+      // Notify script.js
+      window.dispatchEvent(new CustomEvent("shinzi-auth-changed", { detail: { user } }));
     } else {
-      // user logged out
-      if (loginBtn) loginBtn.style.display = "block";
-      if (userProfile) userProfile.style.display = "none";
+      // Logged out
+      loginBtn.style.display = "";
+      userProfile.style.display = "none";
+      window.dispatchEvent(new CustomEvent("shinzi-auth-changed", { detail: { user: null } }));
     }
   });
-
 });
