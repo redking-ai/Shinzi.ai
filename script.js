@@ -2,6 +2,35 @@ const GEMINI_API_KEY = "AIzaSyBWWmYyExEctmR3XS7s55PCsqAosJHcXXY";
 const GEMINI_MODEL = "gemini-2.0-flash";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
+const MSG_LIMIT = 30;
+const STORAGE_KEY = "shinzi_msg_data";
+
+function getMsgData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { count: 0, date: new Date().toDateString() };
+    return JSON.parse(raw);
+  } catch {
+    return { count: 0, date: new Date().toDateString() };
+  }
+}
+
+function saveMsgData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function checkAndIncrementMsgCount() {
+  let data = getMsgData();
+  const today = new Date().toDateString();
+  if (data.date !== today) {
+    data = { count: 0, date: today };
+  }
+  if (data.count >= MSG_LIMIT) return false;
+  data.count++;
+  saveMsgData(data);
+  return true;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const chatInput = document.getElementById("chatInput");
   const sendBtn = document.getElementById("sendBtn");
@@ -9,6 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const welcomeScreen = document.getElementById("welcomeScreen");
   const suggestions = document.getElementById("suggestions");
 
+  // Conversation history for multi-turn context
+  const conversationHistory = [];
   let isWaiting = false;
 
   function getAuthUser() {
@@ -17,15 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function ensureLoggedIn() {
     if (getAuthUser()) return true;
-
-    if (window.ShinziAuth?.signIn) {
-      window.ShinziAuth.signIn().catch((error) => {
-        console.error("Sign-in failed:", error);
-        alert("Please sign in first.");
-      });
-    } else {
-      alert("Please sign in first.");
-    }
+    window.ShinziAuth?.signIn();
     return false;
   }
 
@@ -37,7 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function addMessage(role, text) {
     showChatArea();
-
     const msg = document.createElement("div");
     msg.className = `msg ${role}-msg`;
     msg.textContent = text;
@@ -49,7 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function setTypingState(on) {
     sendBtn.disabled = on;
     chatInput.disabled = on;
-    sendBtn.style.opacity = on ? "0.6" : "1";
   }
 
   function updateMessage(node, text) {
@@ -64,16 +85,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!ensureLoggedIn()) return;
 
-    if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("PASTE_YOUR")) {
-      alert("Put your real Gemini API key in script.js first.");
+    const canSend = checkAndIncrementMsgCount();
+    if (!canSend) {
+      alert("You have reached the 30 message daily limit. Come back tomorrow.");
       return;
     }
 
     isWaiting = true;
     setTypingState(true);
+    chatInput.value = "";
 
     addMessage("user", text);
-    chatInput.value = "";
+    conversationHistory.push({ role: "user", parts: [{ text }] });
 
     const loadingBubble = addMessage("ai", "Thinking...");
     loadingBubble.classList.add("typing");
@@ -83,11 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text }]
-            }
-          ]
+          contents: conversationHistory
         })
       });
 
@@ -98,19 +117,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!aiText) {
-        throw new Error("Empty Gemini response");
-      }
+      if (!aiText) throw new Error("Empty response from Gemini");
 
+      conversationHistory.push({ role: "model", parts: [{ text: aiText }] });
       updateMessage(loadingBubble, aiText);
       loadingBubble.classList.remove("typing");
-    } catch (error) {
-      console.error("Gemini error:", error);
-      updateMessage(
-        loadingBubble,
-        "I am sorry, I encountered an error. Check your Gemini API key, model name, and domain access."
-      );
+    } catch (err) {
+      console.error("Gemini error:", err);
+      updateMessage(loadingBubble, "Sorry, something went wrong: " + err.message);
       loadingBubble.classList.remove("typing");
+      // Remove failed user message from history
+      conversationHistory.pop();
     } finally {
       isWaiting = false;
       setTypingState(false);
@@ -118,15 +135,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function handleSuggestion(promptText) {
-    if (!ensureLoggedIn()) return;
-    chatInput.value = promptText;
-    sendMessage(promptText);
-  }
-
-  document.querySelectorAll(".suggestion-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      handleSuggestion(button.dataset.prompt || "");
+  // Suggestion cards
+  document.querySelectorAll(".suggestion-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const prompt = btn.dataset.prompt || "";
+      if (!prompt) return;
+      if (!ensureLoggedIn()) return;
+      sendMessage(prompt);
     });
   });
 
@@ -139,13 +154,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  window.addEventListener("shinzi-auth-changed", (event) => {
-    const user = event.detail?.user;
+  // Auth state changes from auth.js
+  window.addEventListener("shinzi-auth-changed", (e) => {
+    const user = e.detail?.user;
     if (!user) {
       welcomeScreen.style.display = "";
       suggestions.style.display = "";
       chatWindow.style.display = "none";
       chatWindow.innerHTML = "";
+      conversationHistory.length = 0;
       chatInput.value = "";
       isWaiting = false;
       setTypingState(false);
