@@ -35,7 +35,7 @@ async function proxyRequest(messages) {
   });
   if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
   const data = await response.json();
-  const text = data?.choices?.[0]?.message?.content;
+  const text = data?.reply;
   if (!text) throw new Error("Empty proxy response");
   return text;
 }
