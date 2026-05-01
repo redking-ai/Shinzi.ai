@@ -1,6 +1,4 @@
-const GEMINI_API_KEY = "AIzaSyASEmxQcddG-E97vXdb0W9clwqM16wt-BQ";
-const GEMINI_MODEL = "gemini-2.0-flash";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+const PROXY_URL = "https://shinzi-proxy.onrender.com";
 
 const MSG_LIMIT = 30;
 const STORAGE_KEY = "shinzi_msg_data";
@@ -22,15 +20,78 @@ function saveMsgData(data) {
 function checkAndIncrementMsgCount() {
   let data = getMsgData();
   const today = new Date().toDateString();
-  if (data.date !== today) {
-    data = { count: 0, date: today };
-  }
+  if (data.date !== today) data = { count: 0, date: today };
   if (data.count >= MSG_LIMIT) return false;
   data.count++;
   saveMsgData(data);
   return true;
 }
 
+// PROVIDER 1: OpenRouter via proxy
+async function proxyRequest(messages) {
+  const response = await fetch(`${PROXY_URL}/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages })
+  });
+  if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
+  const data = await response.json();
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error("Empty proxy response");
+  return text;
+}
+
+// PROVIDER 2: Hugging Face via proxy
+async function huggingFaceRequest(messages) {
+  const prompt = messages
+    .map(m => m.role === "user" ? `User: ${m.content}` : `Assistant: ${m.content}`)
+    .join("\n") + "\nAssistant:";
+  const response = await fetch(`${PROXY_URL}/hf`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt })
+  });
+  if (!response.ok) throw new Error(`HF proxy failed: ${response.status}`);
+  const data = await response.json();
+  const text = data?.[0]?.generated_text;
+  if (!text) throw new Error("Empty HF response");
+  return text.trim();
+}
+
+// PROVIDER 3: Puter (final fallback, no key needed)
+async function puterRequest(messages) {
+  const lastMessage = messages[messages.length - 1]?.content || "";
+  const response = await puter.ai.chat(lastMessage);
+  if (!response) throw new Error("Empty Puter response");
+  return typeof response === "string"
+    ? response
+    : response?.message?.content?.[0]?.text || "No response";
+}
+
+// MAIN FALLBACK
+async function getAIResponse(messages, statusCallback) {
+  try {
+    return await proxyRequest(messages);
+  } catch (err) {
+    console.warn("OpenRouter proxy failed:", err.message);
+    statusCallback("Switching to backup AI...");
+  }
+
+  try {
+    return await huggingFaceRequest(messages);
+  } catch (err) {
+    console.warn("HF proxy failed:", err.message);
+    statusCallback("Using basic AI due to high demand...");
+  }
+
+  try {
+    return await puterRequest(messages);
+  } catch (err) {
+    throw new Error("All AI providers unavailable. Please try again later.");
+  }
+}
+
+// CHAT UI
 document.addEventListener("DOMContentLoaded", () => {
   const chatInput = document.getElementById("chatInput");
   const sendBtn = document.getElementById("sendBtn");
@@ -38,7 +99,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const welcomeScreen = document.getElementById("welcomeScreen");
   const suggestions = document.getElementById("suggestions");
 
-  // Conversation history for multi-turn context
   const conversationHistory = [];
   let isWaiting = false;
 
@@ -82,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
   async function sendMessage(rawText) {
     const text = rawText.trim();
     if (!text || isWaiting) return;
-
     if (!ensureLoggedIn()) return;
 
     const canSend = checkAndIncrementMsgCount();
@@ -96,37 +155,22 @@ document.addEventListener("DOMContentLoaded", () => {
     chatInput.value = "";
 
     addMessage("user", text);
-    conversationHistory.push({ role: "user", parts: [{ text }] });
+    conversationHistory.push({ role: "user", content: text });
 
     const loadingBubble = addMessage("ai", "Thinking...");
     loadingBubble.classList.add("typing");
 
     try {
-      const response = await fetch(GEMINI_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: conversationHistory
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error?.message || `HTTP ${response.status}`);
-      }
-
-      const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!aiText) throw new Error("Empty response from Gemini");
-
-      conversationHistory.push({ role: "model", parts: [{ text: aiText }] });
+      const aiText = await getAIResponse(
+        conversationHistory,
+        (status) => updateMessage(loadingBubble, status)
+      );
+      conversationHistory.push({ role: "assistant", content: aiText });
       updateMessage(loadingBubble, aiText);
       loadingBubble.classList.remove("typing");
     } catch (err) {
-      console.error("Gemini error:", err);
-      updateMessage(loadingBubble, "Sorry, something went wrong: " + err.message);
+      updateMessage(loadingBubble, err.message);
       loadingBubble.classList.remove("typing");
-      // Remove failed user message from history
       conversationHistory.pop();
     } finally {
       isWaiting = false;
@@ -135,12 +179,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Suggestion cards
   document.querySelectorAll(".suggestion-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const prompt = btn.dataset.prompt || "";
-      if (!prompt) return;
-      if (!ensureLoggedIn()) return;
+      if (!prompt || !ensureLoggedIn()) return;
       sendMessage(prompt);
     });
   });
@@ -154,7 +196,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Auth state changes from auth.js
   window.addEventListener("shinzi-auth-changed", (e) => {
     const user = e.detail?.user;
     if (!user) {
