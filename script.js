@@ -27,7 +27,6 @@ function checkAndIncrementMsgCount() {
   return true;
 }
 
-// PROVIDER 1: OpenRouter via proxy
 async function proxyRequest(messages) {
   const response = await fetch(`${PROXY_URL}/chat`, {
     method: "POST",
@@ -41,7 +40,6 @@ async function proxyRequest(messages) {
   return text;
 }
 
-// PROVIDER 2: Hugging Face via proxy
 async function huggingFaceRequest(messages) {
   const prompt = messages
     .map(m => m.role === "user" ? `User: ${m.content}` : `Assistant: ${m.content}`)
@@ -58,17 +56,20 @@ async function huggingFaceRequest(messages) {
   return text.trim();
 }
 
-// PROVIDER 3: Puter (final fallback, no key needed)
 async function puterRequest(messages) {
   const lastMessage = messages[messages.length - 1]?.content || "";
-  const response = await puter.ai.chat(lastMessage);
+  const response = await puter.ai.chat(lastMessage, { model: "gpt-4o-mini" });
   if (!response) throw new Error("Empty Puter response");
-  return typeof response === "string"
-    ? response
-    : response?.message?.content?.[0]?.text || "No response";
+  if (typeof response === "string") return response;
+  if (response?.message?.content) {
+    const content = response.message.content;
+    if (typeof content === "string") return content;
+    if (Array.isArray(content)) return content[0]?.text || "No response";
+  }
+  if (response?.text) return response.text;
+  return JSON.stringify(response);
 }
 
-// MAIN FALLBACK
 async function getAIResponse(messages, statusCallback) {
   try {
     return await proxyRequest(messages);
@@ -91,7 +92,6 @@ async function getAIResponse(messages, statusCallback) {
   }
 }
 
-// CHAT UI
 document.addEventListener("DOMContentLoaded", () => {
   const chatInput = document.getElementById("chatInput");
   const sendBtn = document.getElementById("sendBtn");
