@@ -21,6 +21,29 @@
     </div>
 
     <div class="nav-right">
+      <!-- Model Dropdown -->
+      <div class="model-dropdown-wrapper" id="modelDropdownWrapper">
+        <button class="model-dropdown-btn" id="modelDropdownBtn">
+          <span id="selectedModelName">Laguna M.1</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="model-dropdown-menu hidden" id="modelDropdownMenu">
+          <div class="model-group-label">Free Models</div>
+          <button class="model-option" data-model="poolside/laguna-m.1:free" data-name="Laguna M.1">Laguna M.1</button>
+          <button class="model-option" data-model="poolside/laguna-xs.2:free" data-name="Laguna XS.2">Laguna XS.2</button>
+          <button class="model-option" data-model="meta-llama/llama-3.3-70b-instruct:free" data-name="Llama 3.3 70B">Llama 3.3 70B</button>
+          <button class="model-option" data-model="meta-llama/llama-3.2-3b-instruct:free" data-name="Llama 3.2 3B">Llama 3.2 3B</button>
+          <button class="model-option" data-model="google/gemma-3-27b-it:free" data-name="Gemma 3 27B">Gemma 3 27B</button>
+          <button class="model-option" data-model="google/gemma-4-26b-a4b-it:free" data-name="Gemma 4 26B">Gemma 4 26B</button>
+          <button class="model-option" data-model="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free" data-name="Nemotron Nano">Nemotron Nano</button>
+          <button class="model-option" data-model="z-ai/glm-4.5-air:free" data-name="GLM 4.5 Air">GLM 4.5 Air</button>
+          <button class="model-option" data-model="liquid/lfm-2.5-1.2b-thinking:free" data-name="LFM 2.5 Thinking">LFM 2.5 Thinking</button>
+          <button class="model-option" data-model="mistralai/mistral-7b-instruct:free" data-name="Mistral 7B">Mistral 7B</button>
+        </div>
+      </div>
+
       <button id="loginTrigger" class="btn-login">Sign In</button>
 
       <div id="userProfile" class="user-profile" style="display: none;">
@@ -110,9 +133,8 @@
     </div>
   </main>
 
-  <!-- auth.js MUST load first as module, then script.js deferred -->
   <script src="https://js.puter.com/v2/"></script>
-<script type="module" src="auth.js"></script>
-<script src="script.js" defer></script>
+  <script type="module" src="auth.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
