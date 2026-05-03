@@ -22,18 +22,21 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+provider.setCustomParameters({ prompt: "select_account" });
+
+const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
 
 async function signInUser() {
   try {
     if (isMobile) {
       await signInWithRedirect(auth, provider);
     } else {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      console.log("Popup login success:", result.user.email);
     }
   } catch (err) {
-    console.error("Login error:", err);
     if (err.code !== "auth/popup-closed-by-user") {
+      console.error("Login error:", err);
       alert("Login failed: " + err.message);
     }
   }
@@ -47,29 +50,25 @@ async function signOutUser() {
   }
 }
 
-// Expose globally for script.js
 window.ShinziAuth = {
   signIn: signInUser,
   signOut: signOutUser,
   get currentUser() { return auth.currentUser; }
 };
 
-// Handle redirect result ONCE on page load (mobile only)
-if (isMobile) {
-  getRedirectResult(auth)
-    .then((result) => {
-      if (result?.user) {
-        console.log("Redirect login success:", result.user.email);
-      }
-    })
-    .catch((err) => {
-      if (err.code !== "auth/no-auth-event") {
-        console.error("Redirect result error:", err);
-      }
-    });
-}
+// Handle redirect result on page load
+getRedirectResult(auth)
+  .then((result) => {
+    if (result?.user) {
+      console.log("Redirect login success:", result.user.email);
+    }
+  })
+  .catch((err) => {
+    if (err.code !== "auth/no-auth-event") {
+      console.error("Redirect result error:", err);
+    }
+  });
 
-// Wait for DOM before touching UI
 document.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.getElementById("loginTrigger");
   const logoutBtn = document.getElementById("logoutBtn");
@@ -81,12 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logoutBtn) logoutBtn.addEventListener("click", signOutUser);
 
   onAuthStateChanged(auth, (user) => {
+    console.log("Auth state changed:", user?.email || "logged out");
     if (user) {
-      // Logged in
       loginBtn.style.display = "none";
       userProfile.style.display = "flex";
 
-      // Set avatar
       if (user.photoURL) {
         userPhoto.src = user.photoURL;
         userPhoto.classList.remove("hidden");
@@ -94,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         const initials = (user.displayName || "U")
           .split(" ")
-          .map((n) => n[0])
+          .map(n => n[0])
           .join("")
           .toUpperCase()
           .slice(0, 2);
@@ -103,10 +101,8 @@ document.addEventListener("DOMContentLoaded", () => {
         userPhoto.classList.add("hidden");
       }
 
-      // Notify script.js
       window.dispatchEvent(new CustomEvent("shinzi-auth-changed", { detail: { user } }));
     } else {
-      // Logged out
       loginBtn.style.display = "";
       userProfile.style.display = "none";
       window.dispatchEvent(new CustomEvent("shinzi-auth-changed", { detail: { user: null } }));
