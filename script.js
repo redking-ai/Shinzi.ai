@@ -27,69 +27,24 @@ function checkAndIncrementMsgCount() {
   return true;
 }
 
-async function proxyRequest(messages) {
+async function sendToProxy(messages) {
   const response = await fetch(`${PROXY_URL}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ messages })
   });
-  if (!response.ok) throw new Error(`Proxy failed: ${response.status}`);
+
   const data = await response.json();
-  const text = data?.reply;
-  if (!text) throw new Error("Empty proxy response");
-  return text;
-}
 
-async function huggingFaceRequest(messages) {
-  const prompt = messages
-    .map(m => m.role === "user" ? `User: ${m.content}` : `Assistant: ${m.content}`)
-    .join("\n") + "\nAssistant:";
-  const response = await fetch(`${PROXY_URL}/hf`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt })
-  });
-  if (!response.ok) throw new Error(`HF proxy failed: ${response.status}`);
-  const data = await response.json();
-  const text = data?.[0]?.generated_text;
-  if (!text) throw new Error("Empty HF response");
-  return text.trim();
-}
-
-async function puterRequest(messages) {
-  const lastMessage = messages[messages.length - 1]?.content || "";
-  const response = await puter.ai.chat(lastMessage, { model: "gpt-4o-mini" });
-  if (!response) throw new Error("Empty Puter response");
-  if (typeof response === "string") return response;
-  if (response?.message?.content) {
-    const content = response.message.content;
-    if (typeof content === "string") return content;
-    if (Array.isArray(content)) return content[0]?.text || "No response";
-  }
-  if (response?.text) return response.text;
-  return JSON.stringify(response);
-}
-
-async function getAIResponse(messages, statusCallback) {
-  try {
-    return await proxyRequest(messages);
-  } catch (err) {
-    console.warn("OpenRouter proxy failed:", err.message);
-    statusCallback("Switching to backup AI...");
+  if (!response.ok) {
+    throw new Error(data?.error || `Server error: ${response.status}`);
   }
 
-  try {
-    return await huggingFaceRequest(messages);
-  } catch (err) {
-    console.warn("HF proxy failed:", err.message);
-    statusCallback("Using basic AI due to high demand...");
+  if (!data.reply) {
+    throw new Error("No reply from server");
   }
 
-  try {
-    return await puterRequest(messages);
-  } catch (err) {
-    throw new Error("All AI providers unavailable. Please try again later.");
-  }
+  return data.reply;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -161,15 +116,13 @@ document.addEventListener("DOMContentLoaded", () => {
     loadingBubble.classList.add("typing");
 
     try {
-      const aiText = await getAIResponse(
-        conversationHistory,
-        (status) => updateMessage(loadingBubble, status)
-      );
-      conversationHistory.push({ role: "assistant", content: aiText });
-      updateMessage(loadingBubble, aiText);
+      const reply = await sendToProxy(conversationHistory);
+      conversationHistory.push({ role: "assistant", content: reply });
+      updateMessage(loadingBubble, reply);
       loadingBubble.classList.remove("typing");
     } catch (err) {
-      updateMessage(loadingBubble, err.message);
+      console.error("Chat error:", err);
+      updateMessage(loadingBubble, "Something went wrong. Please try again.");
       loadingBubble.classList.remove("typing");
       conversationHistory.pop();
     } finally {
