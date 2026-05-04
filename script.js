@@ -1,9 +1,18 @@
 const PROXY_URL = "https://shinzi-proxy.onrender.com";
 
-let selectedModel = "poolside/laguna-m.1:free";
+const ADMIN_EMAILS = [
+  "sboficial226@gmail.com",
+  "somahaldar355@gmail.com",
+  "redkng510@gmail.com"
+];
+
+let selectedModel = "openrouter/owl-alpha";
+let isAdmin = false;
+let unlimitedMode = false;
 
 const MSG_LIMIT = 30;
 const STORAGE_KEY = "shinzi_msg_data";
+const UNLIMITED_KEY = "shinzi_unlimited";
 
 function getMsgData() {
   try {
@@ -20,6 +29,7 @@ function saveMsgData(data) {
 }
 
 function checkAndIncrementMsgCount() {
+  if (unlimitedMode) return true;
   let data = getMsgData();
   const today = new Date().toDateString();
   if (data.date !== today) data = { count: 0, date: today };
@@ -37,15 +47,8 @@ async function sendToProxy(messages) {
   });
 
   const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data?.error || `Server error: ${response.status}`);
-  }
-
-  if (!data.reply) {
-    throw new Error("No reply from server");
-  }
-
+  if (!response.ok) throw new Error(data?.error || `Server error: ${response.status}`);
+  if (!data.reply) throw new Error("No reply from server");
   return data.reply;
 }
 
@@ -58,9 +61,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const dropdownBtn = document.getElementById("modelDropdownBtn");
   const dropdownMenu = document.getElementById("modelDropdownMenu");
   const selectedModelName = document.getElementById("selectedModelName");
+  const adminBtn = document.getElementById("adminBtn");
+  const adminPanel = document.getElementById("adminPanel");
+  const closeAdmin = document.getElementById("closeAdmin");
+  const toggleUnlimitedBtn = document.getElementById("toggleUnlimitedBtn");
+  const resetLimitBtn = document.getElementById("resetLimitBtn");
+  const clearChatBtn = document.getElementById("clearChatBtn");
+  const clearStorageBtn = document.getElementById("clearStorageBtn");
 
   const conversationHistory = [];
   let isWaiting = false;
+
+  // Load unlimited mode from storage
+  unlimitedMode = localStorage.getItem(UNLIMITED_KEY) === "true";
 
   // Model dropdown
   dropdownBtn.addEventListener("click", (e) => {
@@ -79,10 +92,71 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".model-option").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       dropdownMenu.classList.add("hidden");
+      if (adminPanel && !adminPanel.classList.contains("hidden")) {
+        document.getElementById("adminCurrentModel").textContent = btn.dataset.name;
+      }
     });
   });
 
   document.querySelector(".model-option")?.classList.add("active");
+
+  // Admin panel
+  adminBtn.addEventListener("click", () => {
+    adminPanel.classList.remove("hidden");
+    updateAdminInfo();
+  });
+
+  closeAdmin.addEventListener("click", () => {
+    adminPanel.classList.add("hidden");
+  });
+
+  adminPanel.addEventListener("click", (e) => {
+    if (e.target === adminPanel) adminPanel.classList.add("hidden");
+  });
+
+  function updateAdminInfo() {
+    const data = getMsgData();
+    const today = new Date().toDateString();
+    const count = data.date === today ? data.count : 0;
+    document.getElementById("adminMsgCount").textContent = count;
+    document.getElementById("adminMode").textContent = unlimitedMode ? "Unlimited" : "Normal (30/day)";
+    document.getElementById("adminCurrentModel").textContent = selectedModelName.textContent;
+    document.getElementById("adminLimitStatus").textContent = unlimitedMode
+      ? "Unlimited mode is ON — no message limit"
+      : `Normal mode — ${count}/30 messages used today`;
+    toggleUnlimitedBtn.textContent = unlimitedMode ? "Disable Unlimited" : "Enable Unlimited";
+  }
+
+  toggleUnlimitedBtn.addEventListener("click", () => {
+    unlimitedMode = !unlimitedMode;
+    localStorage.setItem(UNLIMITED_KEY, unlimitedMode.toString());
+    updateAdminInfo();
+  });
+
+  resetLimitBtn.addEventListener("click", () => {
+    saveMsgData({ count: 0, date: new Date().toDateString() });
+    updateAdminInfo();
+    alert("Daily message count reset!");
+  });
+
+  clearChatBtn.addEventListener("click", () => {
+    chatWindow.innerHTML = "";
+    conversationHistory.length = 0;
+    welcomeScreen.style.display = "";
+    suggestions.style.display = "";
+    chatWindow.style.display = "none";
+    adminPanel.classList.add("hidden");
+  });
+
+  clearStorageBtn.addEventListener("click", () => {
+    if (confirm("Reset all Shinzi AI data? This cannot be undone.")) {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(UNLIMITED_KEY);
+      unlimitedMode = false;
+      updateAdminInfo();
+      alert("All data reset!");
+    }
+  });
 
   function getAuthUser() {
     return window.ShinziAuth?.currentUser || null;
@@ -178,7 +252,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.addEventListener("shinzi-auth-changed", (e) => {
     const user = e.detail?.user;
-    if (!user) {
+    if (user) {
+      // Check if admin
+      isAdmin = ADMIN_EMAILS.includes(user.email?.toLowerCase());
+      if (isAdmin) {
+        adminBtn.classList.remove("hidden");
+      } else {
+        adminBtn.classList.add("hidden");
+      }
+    } else {
+      isAdmin = false;
+      adminBtn.classList.add("hidden");
+      adminPanel.classList.add("hidden");
       welcomeScreen.style.display = "";
       suggestions.style.display = "";
       chatWindow.style.display = "none";
