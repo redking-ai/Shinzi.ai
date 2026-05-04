@@ -1,37 +1,7 @@
 const PROXY_URL = "https://shinzi-proxy.onrender.com";
-// Model selection
+
 let selectedModel = "poolside/laguna-m.1:free";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const dropdownBtn = document.getElementById("modelDropdownBtn");
-  const dropdownMenu = document.getElementById("modelDropdownMenu");
-  const selectedModelName = document.getElementById("selectedModelName");
-
-  // Toggle dropdown
-  dropdownBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    dropdownMenu.classList.toggle("hidden");
-  });
-
-  // Close when clicking outside
-  document.addEventListener("click", () => {
-    dropdownMenu.classList.add("hidden");
-  });
-
-  // Select model
-  document.querySelectorAll(".model-option").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      selectedModel = btn.dataset.model;
-      selectedModelName.textContent = btn.dataset.name;
-      document.querySelectorAll(".model-option").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      dropdownMenu.classList.add("hidden");
-    });
-  });
-
-  // Set first as active
-  document.querySelector(".model-option")?.classList.add("active");
-});
 const MSG_LIMIT = 30;
 const STORAGE_KEY = "shinzi_msg_data";
 
@@ -85,9 +55,34 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatWindow = document.getElementById("chatWindow");
   const welcomeScreen = document.getElementById("welcomeScreen");
   const suggestions = document.getElementById("suggestions");
+  const dropdownBtn = document.getElementById("modelDropdownBtn");
+  const dropdownMenu = document.getElementById("modelDropdownMenu");
+  const selectedModelName = document.getElementById("selectedModelName");
 
   const conversationHistory = [];
   let isWaiting = false;
+
+  // Model dropdown
+  dropdownBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", () => {
+    dropdownMenu.classList.add("hidden");
+  });
+
+  document.querySelectorAll(".model-option").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      selectedModel = btn.dataset.model;
+      selectedModelName.textContent = btn.dataset.name;
+      document.querySelectorAll(".model-option").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      dropdownMenu.classList.add("hidden");
+    });
+  });
+
+  document.querySelector(".model-option")?.classList.add("active");
 
   function getAuthUser() {
     return window.ShinziAuth?.currentUser || null;
