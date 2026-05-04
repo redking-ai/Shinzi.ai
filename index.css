@@ -451,3 +451,140 @@ input {
   color: #fff;
   font-weight: 600;
 }
+/* Admin Button */
+.btn-admin {
+  border: 1px solid #444;
+  background: #1a1a1a;
+  color: #fff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: background 0.15s ease;
+}
+
+.btn-admin:hover {
+  background: #252525;
+}
+
+/* Admin Panel */
+.admin-panel {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.admin-content {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.admin-header h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.admin-close {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.admin-close:hover {
+  color: #fff;
+}
+
+.admin-section {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #222;
+}
+
+.admin-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.admin-section h3 {
+  font-size: 0.82rem;
+  color: #888;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.admin-status {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.admin-info p {
+  font-size: 0.88rem;
+  color: #aaa;
+  margin-bottom: 6px;
+}
+
+.admin-info span {
+  color: #fff;
+  font-weight: 600;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-action-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #fff;
+  color: #000;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.admin-action-btn:hover {
+  opacity: 0.88;
+}
+
+.admin-action-btn.secondary {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.admin-action-btn.danger {
+  background: #3a1a1a;
+  color: #ff6b6b;
+}
