@@ -3,8 +3,6 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -23,8 +21,6 @@ const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
 provider.setCustomParameters({ prompt: "select_account" });
-
-const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
 
 async function signInUser() {
   try {
@@ -53,17 +49,6 @@ window.ShinziAuth = {
 };
 
 // Handle redirect result on page load
-getRedirectResult(auth)
-  .then((result) => {
-    if (result?.user) {
-      console.log("Redirect login success:", result.user.email);
-    }
-  })
-  .catch((err) => {
-    if (err.code !== "auth/no-auth-event") {
-      console.error("Redirect result error:", err);
-    }
-  });
 
 document.addEventListener("DOMContentLoaded", () => {
   const loginBtn = document.getElementById("loginTrigger");
