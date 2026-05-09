@@ -28,12 +28,8 @@ const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
 
 async function signInUser() {
   try {
-    if (isMobile) {
-      await signInWithRedirect(auth, provider);
-    } else {
-      const result = await signInWithPopup(auth, provider);
-      console.log("Popup login success:", result.user.email);
-    }
+    const result = await signInWithPopup(auth, provider);
+    console.log("Login success:", result.user.email);
   } catch (err) {
     if (err.code !== "auth/popup-closed-by-user") {
       console.error("Login error:", err);
