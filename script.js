@@ -443,3 +443,36 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+// NEW SINGLE-MODEL DROPDOWN LOGIC
+const dropdownBtn = document.getElementById("modelDropdownBtn");
+const dropdownMenu = document.getElementById("modelDropdownMenu");
+const selectedModelName = document.getElementById("selectedModelName");
+
+if (dropdownBtn && dropdownMenu) {
+  // Toggle menu when clicking the button
+  dropdownBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle("hidden");
+  });
+
+  // Listen for clicks on the new single model buttons
+  document.querySelectorAll(".model-option").forEach(button => {
+    button.addEventListener("click", function() {
+      // Instantly switches to the exact single model ID from OpenRouter
+      selectedModel = this.getAttribute("data-model");
+      if (selectedModelName) {
+        selectedModelName.textContent = this.getAttribute("data-name");
+      }
+      dropdownMenu.classList.add("hidden");
+      console.log("Active model switched to:", selectedModel);
+    });
+  });
+
+  // Close dropdown if clicking anywhere else on the screen
+  document.addEventListener("click", (e) => {
+    const wrapper = document.getElementById("modelDropdownWrapper");
+    if (wrapper && !wrapper.contains(e.target)) {
+      dropdownMenu.classList.add("hidden");
+    }
+  });
+}
