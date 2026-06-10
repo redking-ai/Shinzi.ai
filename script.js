@@ -6,16 +6,8 @@ const ADMIN_EMAILS = [
   "redkng510@gmail.com"
 ];
 
-// New single model setup
+// Clean 1-to-1 Single Model Setup
 let selectedModel = "deepseek/deepseek-v4-flash:free"; 
-let isCoderMode = false;
-let isAdmin = false;
-let unlimitedMode = false;
-let pendingAttachments = [];
-
-
-let selectedModel = "openrouter/owl-alpha";
-let selectedSystemKey = "shinzi-flash";
 let isCoderMode = false;
 let isAdmin = false;
 let unlimitedMode = false;
@@ -60,13 +52,16 @@ function showToast(msg) {
   }, 2200);
 }
 
+// Fixed to target the selected single model directly
 async function sendToProxy(messages) {
-  const modelList = isCoderMode ? MODELS["shinzi-coder"] : MODELS[selectedSystemKey];
+  const modelToUse = isCoderMode ? "qwen/qwen3-coder:free" : selectedModel;
+  
   const response = await fetch(`${PROXY_URL}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages, model: modelList[0] })
+    body: JSON.stringify({ messages, model: modelToUse })
   });
+  
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error || `Server error: ${response.status}`);
   if (!data.reply) throw new Error("No reply from server");
@@ -103,26 +98,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   unlimitedMode = localStorage.getItem(UNLIMITED_KEY) === "true";
 
-  // ── Model dropdown ──
-  dropdownBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    dropdownMenu.classList.toggle("hidden");
-  });
-  document.addEventListener("click", () => {
-    dropdownMenu.classList.add("hidden");
+  // ── Model Dropdown Controller ──
+  if (dropdownBtn && dropdownMenu) {
+    dropdownBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle("hidden");
+    });
+
+    document.querySelectorAll(".model-option").forEach((btn) => {
+      btn.addEventListener("click", function() {
+        selectedModel = this.getAttribute("data-model");
+        if (selectedModelName) {
+          selectedModelName.textContent = this.getAttribute("data-name");
+        }
+        document.querySelectorAll(".model-option").forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        dropdownMenu.classList.add("hidden");
+        console.log("Active model switched to:", selectedModel);
+      });
+    });
+  }
+
+  // Close dropdown or menus on global body clicks
+  document.addEventListener("click", (e) => {
+    const wrapper = document.getElementById("modelDropdownWrapper");
+    if (wrapper && !wrapper.contains(e.target)) {
+      dropdownMenu.classList.add("hidden");
+    }
     plusMenu.classList.add("hidden");
   });
-  document.querySelectorAll(".model-option").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      selectedModel = btn.dataset.model;
-      selectedSystemKey = btn.dataset.system || "shinzi-flash";
-      selectedModelName.textContent = btn.dataset.name;
-      document.querySelectorAll(".model-option").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      dropdownMenu.classList.add("hidden");
-    });
-  });
-  document.querySelector(".model-option")?.classList.add("active");
 
   // ── Plus button ──
   plusBtn.addEventListener("click", (e) => {
@@ -231,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const count = data.date === today ? data.count : 0;
     document.getElementById("adminMsgCount").textContent = count;
     document.getElementById("adminMode").textContent = unlimitedMode ? "Unlimited" : "Normal (30/day)";
-    document.getElementById("adminCurrentModel").textContent = selectedModelName.textContent;
+    document.getElementById("adminCurrentModel").textContent = selectedModelName ? selectedModelName.textContent : "Unknown";
     document.getElementById("adminLimitStatus").textContent = unlimitedMode
       ? "Unlimited mode is ON"
       : `Normal mode — ${count}/30 messages used today`;
@@ -443,36 +447,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-// NEW SINGLE-MODEL DROPDOWN LOGIC
-const dropdownBtn = document.getElementById("modelDropdownBtn");
-const dropdownMenu = document.getElementById("modelDropdownMenu");
-const selectedModelName = document.getElementById("selectedModelName");
-
-if (dropdownBtn && dropdownMenu) {
-  // Toggle menu when clicking the button
-  dropdownBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    dropdownMenu.classList.toggle("hidden");
-  });
-
-  // Listen for clicks on the new single model buttons
-  document.querySelectorAll(".model-option").forEach(button => {
-    button.addEventListener("click", function() {
-      // Instantly switches to the exact single model ID from OpenRouter
-      selectedModel = this.getAttribute("data-model");
-      if (selectedModelName) {
-        selectedModelName.textContent = this.getAttribute("data-name");
-      }
-      dropdownMenu.classList.add("hidden");
-      console.log("Active model switched to:", selectedModel);
-    });
-  });
-
-  // Close dropdown if clicking anywhere else on the screen
-  document.addEventListener("click", (e) => {
-    const wrapper = document.getElementById("modelDropdownWrapper");
-    if (wrapper && !wrapper.contains(e.target)) {
-      dropdownMenu.classList.add("hidden");
-    }
-  });
-}
