@@ -21,23 +21,51 @@
     </div>
 
     <div class="nav-right">
-      <!-- Model Dropdown -->
       <div class="model-dropdown-wrapper" id="modelDropdownWrapper">
         <button class="model-dropdown-btn" id="modelDropdownBtn">
-          <span id="selectedModelName">Shinzi Flash</span>
+          <span id="selectedModelName">Shinzi Flash 2.0</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polyline points="6 9 12 15 18 9"/>
           </svg>
         </button>
-        <div class="model-dropdown-menu hidden" id="modelDropdownMenu">
-         <div class="model-group-label">Shinzi Models</div>
-          <button class="model-option" data-model="shinzi-flash" data-system="shinzi-flash" data-name="Shinzi Flash">Shinzi Flash</button>
-          <button class="model-option" data-model="shinzi-flash2" data-system="shinzi-flash2" data-name="Shinzi Flash 2.0">Shinzi Flash 2.0</button>
-          <button class="model-option" data-model="shinzi-lite" data-system="shinzi-lite" data-name="Shinzi Lite">Shinzi Lite</button>
+        <div class="model-dropdown-menu hidden" id="modelDropdownMenu" style="max-height: 350px; overflow-y: auto;">
+          
+          <div class="model-group-label">⚡ Flash Series</div>
+          <button class="model-option" data-model="deepseek/deepseek-v4-flash:free" data-name="Shinzi Flash 2.0">Shinzi Flash 2.0</button>
+          <button class="model-option" data-model="minimax/minimax-m2.5:free" data-name="Shinzi Flash 1.0">Shinzi Flash 1.0</button>
+          <button class="model-option" data-model="nvidia/nemotron-nano-9b-v2:free" data-name="Shinzi Flash 0.7">Shinzi Flash 0.7</button>
+          <button class="model-option" data-model="poolside/laguna-xs.2:free" data-name="Shinzi Flash 0.6">Shinzi Flash 0.6</button>
+          <button class="model-option" data-model="z-ai/glm-4.5-air:free" data-name="Shinzi Flash 0.5">Shinzi Flash 0.5</button>
+          <button class="model-option" data-model="poolside/laguna-m.1:free" data-name="Shinzi Flash 0.4">Shinzi Flash 0.4</button>
+          <button class="model-option" data-model="nvidia/nemotron-3-super-120b-a12b:free" data-name="Shinzi Flash 0.1">Shinzi Flash 0.1</button>
+
+          <div class="model-group-label">🧠 SFO (Smart Fast Organization)</div>
+          <button class="model-option" data-model="openai/gpt-oss-20b:free" data-name="Shinzi SFO 1.5">Shinzi SFO 1.5</button>
+          <button class="model-option" data-model="meta-llama/llama-3.2-3b-instruct:free" data-name="Shinzi SFO 0.2">Shinzi SFO 0.2</button>
+          <button class="model-option" data-model="meta-llama/llama-3.3-70b-instruct:free" data-name="Shinzi SFO 0.1">Shinzi SFO 0.1</button>
+
+          <div class="model-group-label">🏢 SO (Smart Organizations)</div>
+          <button class="model-option" data-model="openai/gpt-oss-120b:free" data-name="Shinzi S.O. 1.0">Shinzi S.O. 1.0</button>
+
+          <div class="model-group-label">💻 SCO (Smart Code Organization)</div>
+          <button class="model-option" data-model="qwen/qwen3-coder:free" data-name="Shinzi S.C.O 1.0">Shinzi S.C.O 1.0</button>
+          <button class="model-option" data-model="openrouter/owl-alpha" data-name="Shinzi S.C.O 0.5">Shinzi S.C.O 0.5</button>
+
+          <div class="model-group-label">👁️ Lens (Vision)</div>
+          <button class="model-option" data-model="google/gemma-4-31b-it:free" data-name="Shinzi Lens 1.5">Shinzi Lens 1.5</button>
+          <button class="model-option" data-model="google/gemma-4-26b-a4b-it:free" data-name="Shinzi Lens 1.0">Shinzi Lens 1.0</button>
+          <button class="model-option" data-model="moonshotai/kimi-k2.6:free" data-name="Shinzi Lens 0.8">Shinzi Lens 0.8</button>
+          <button class="model-option" data-model="meta-llama/llama-3.2-11b-vision-instruct:free" data-name="Shinzi Lens 0.5">Shinzi Lens 0.5</button>
+
+          <div class="model-group-label">🎬 Video Lens</div>
+          <button class="model-option" data-model="nvidia/nemotron-nano-12b-v2-vl:free" data-name="Shinzi Video Lens 1.5">Shinzi Video Lens 1.5</button>
+          <button class="model-option" data-model="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free" data-name="Shinzi Video Lens 1.0">Shinzi Video Lens 1.0</button>
+
+          <div class="model-group-label">🤖 Auto</div>
+          <button class="model-option" data-model="openrouter/free" data-name="Shinzi AI 0.1">Shinzi AI 0.1</button>
         </div>
       </div>
 
-      <!-- Admin Button (hidden by default, shows for admin emails) -->
       <button id="adminBtn" class="btn-admin hidden">Admin</button>
 
       <button id="loginTrigger" class="btn-login">Sign In</button>
@@ -50,7 +78,6 @@
     </div>
   </nav>
 
-  <!-- Admin Panel Modal -->
   <div id="adminPanel" class="admin-panel hidden">
     <div class="admin-content">
       <div class="admin-header">
@@ -103,28 +130,29 @@
     <section id="chatWindow" class="chat-window" aria-live="polite"></section>
 
     <div class="bottom-controls">
-  <div id="plusMenu" class="plus-menu hidden">
-    <button class="plus-option" id="optPhoto">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-      Photo
-    </button>
-    <button class="plus-option" id="optCamera">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      Camera
-    </button>
-    <button class="plus-option" id="optFiles">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Files
-    </button>
-    <button class="plus-option" id="optCoding">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/></svg>
-      Coding
-    </button>
-    <button class="plus-option" id="optBuildWeb">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17"/><path d="M12 3c2.5 2.8 3.8 5.9 3.8 9s-1.3 6.2-3.8 9"/><path d="M12 3c-2.5 2.8-3.8 5.9-3.8 9s1.3 6.2 3.8 9"/></svg>
-      Build Web
-    </button>
-  </div>
+      <div id="plusMenu" class="plus-menu hidden">
+        <button class="plus-option" id="optPhoto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Photo
+        </button>
+        <button class="plus-option" id="optCamera">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Camera
+        </button>
+        <button class="plus-option" id="optFiles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Files
+        </button>
+        <button class="plus-option" id="optCoding">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/></svg>
+          Coding
+        </button>
+        <button class="plus-option" id="optBuildWeb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17"/><path d="M12 3c2.5 2.8 3.8 5.9 3.8 9s-1.3 6.2-3.8 9"/><path d="M12 3c-2.5 2.8-3.8 5.9-3.8 9s1.3 6.2 3.8 9"/></svg>
+          Build Web
+        </button>
+      </div>
+
       <div id="suggestions" class="suggestions-grid">
         <button class="card suggestion-btn" type="button" data-prompt="Make me a website">
           <span class="card-icon" aria-hidden="true">
@@ -181,30 +209,29 @@
 
       <div class="input-container">
         <div class="input-top" id="inputTop"></div>
-<div class="coder-tag hidden" id="coderTag">
-  Coder
-  <button id="coderTagClose">×</button>
-</div>
-<div class="input-wrapper">
-  <button class="plus-btn" id="plusBtn" type="button" aria-label="Add">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  </button>
-  <input type="text" id="chatInput" placeholder="Ask anything..." autocomplete="off">
-  <button id="sendBtn" class="send-btn" type="button" aria-label="Send message">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-  </button>
-  </div>
-      <p class="disclaimer">Shinzi AI can make mistakes. Check important info.</p>
+        <div class="coder-tag hidden" id="coderTag">
+          Coder
+          <button id="coderTagClose">×</button>
+        </div>
+        <div class="input-wrapper">
+          <button class="plus-btn" id="plusBtn" type="button" aria-label="Add">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+          <input type="text" id="chatInput" placeholder="Ask anything..." autocomplete="off">
+          <button id="sendBtn" class="send-btn" type="button" aria-label="Send message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </button>
+        </div>
+        <p class="disclaimer">Shinzi AI can make mistakes. Check important info.</p>
+      </div>
     </div>
-  </div>
   </main>
-<!-- Toast -->
-<div id="toast" class="toast hidden"></div>
 
-<!-- Hidden inputs -->
-<input type="file" id="photoInput" accept="image/*" multiple style="display:none">
-<input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
-<input type="file" id="fileInput" multiple style="display:none">
+  <div id="toast" class="toast hidden"></div>
+
+  <input type="file" id="photoInput" accept="image/*" multiple style="display:none">
+  <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
+  <input type="file" id="fileInput" multiple style="display:none">
 
   <script src="https://js.puter.com/v2/"></script>
   <script type="module" src="auth.js"></script>
