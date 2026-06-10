@@ -6,28 +6,13 @@ const ADMIN_EMAILS = [
   "redkng510@gmail.com"
 ];
 
-const MODELS = {
-  "shinzi-flash": [
-    "poolside/laguna-xs.2:free",
-    "openai/gpt-oss-120b:free",
-    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free"
-  ],
-  "shinzi-flash2": [
-    "minimax/minimax-m2.5:free",
-    "nvidia/nemotron-3-super-120b-a12b:free",
-    "openai/gpt-oss-120b:free"
-  ],
-  "shinzi-lite": [
-    "poolside/laguna-xs.2:free",
-    "poolside/laguna-m.1:free",
-    "openai/gpt-oss-20b:free"
-  ],
-  "shinzi-coder": [
-    "openrouter/owl-alpha",
-    "qwen/qwen3-coder:free",
-    "openai/gpt-oss-120b:free"
-  ]
-};
+// New single model setup
+let selectedModel = "deepseek/deepseek-v4-flash:free"; 
+let isCoderMode = false;
+let isAdmin = false;
+let unlimitedMode = false;
+let pendingAttachments = [];
+
 
 let selectedModel = "openrouter/owl-alpha";
 let selectedSystemKey = "shinzi-flash";
