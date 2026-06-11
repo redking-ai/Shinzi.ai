@@ -55,13 +55,13 @@ function showToast(msg) {
 // Fixed to target the selected single model directly
 async function sendToProxy(messages) {
   const modelToUse = isCoderMode ? "qwen/qwen3-coder:free" : selectedModel;
-  
+
   const response = await fetch(`${PROXY_URL}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ messages, model: modelToUse })
   });
-  
+
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error || `Server error: ${response.status}`);
   if (!data.reply) throw new Error("No reply from server");
@@ -378,6 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chatInput.disabled = on;
   }
 
+  // ── FIXED SEND MESSAGE LOGIC (WITH FULL MULTIMODAL VISION SUPPORT) ──
   async function sendMessage(rawText) {
     const text = rawText.trim();
     if ((!text && pendingAttachments.length === 0) || isWaiting) return;
@@ -391,8 +392,34 @@ document.addEventListener("DOMContentLoaded", () => {
     setTypingState(true);
     chatInput.value = "";
 
+    // 1. Capture the image base64 links before addUserMessage clears the array!
+    const attachedImages = pendingAttachments.filter(a => a.type === "image");
+
+    // 2. Render the user UI chat bubbles
     addUserMessage(text);
-    if (text) conversationHistory.push({ role: "user", content: text });
+
+    // 3. Construct the payload for OpenRouter
+    let userPayloadContent = text;
+
+    if (attachedImages.length > 0) {
+      userPayloadContent = [];
+      // If there is written text alongside the image, add it first
+      if (text) {
+        userPayloadContent.push({ type: "text", text: text });
+      }
+      // Loop through and append each image in OpenRouter's vision standard format
+      attachedImages.forEach(img => {
+        userPayloadContent.push({
+          type: "image_url",
+          image_url: { url: img.url } // Contains the raw data:image/... base64 string
+        });
+      });
+    }
+
+    // 4. Push organized multi-modal block to history
+    if (text || attachedImages.length > 0) {
+      conversationHistory.push({ role: "user", content: userPayloadContent });
+    }
 
     const loadingMsg = addAiMessage("Thinking...");
     loadingMsg.classList.add("typing");
@@ -403,7 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
       loadingMsg.textContent = reply;
       loadingMsg.classList.remove("typing");
     } catch (err) {
-      loadingMsg.textContent = "Something went wrong. Please try again.";
+      loadingMsg.textContent = err.message || "Something went wrong. Please try again.";
       loadingMsg.classList.remove("typing");
       conversationHistory.pop();
     } finally {
